@@ -1,33 +1,20 @@
-
-import {
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from '@headlessui/react';
-import { StarIcon } from '@heroicons/react/20/solid';
-import { fetchGraphQL } from '@/utils/fetchGraphQL'; 
-import { ProductQuery } from '@/queries/products/ProductQuery'; // Import your GraphQL query for fetching product by slug
-import { SimpleProduct } from '@/gql/graphql';
+// ProductDetail.tsx
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+import { fetchGraphQL } from '@/utils/fetchGraphQL';
+import { ProductQuery } from '@/queries/products/ProductQuery';
+import { VariableProduct } from '@/gql/graphql';
 import { print } from 'graphql';
-import { useState } from 'react';
-import { FavProduct, ProductButtons } from '@/components/productButton';
+import ProductInfo from '@/components/productInfo';
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 interface Props {
   params: { slug: string };
 }
 
-
-export default async function  ProductDetail({ params }: Props) {
+export default async function ProductDetail({ params }: Props) {
   const { slug } = params;
-  
-  const { product } = await fetchGraphQL<{ product: SimpleProduct }>(print(ProductQuery), {id: slug})
+  const { product } = await fetchGraphQL<{ product: VariableProduct }>(print(ProductQuery), { id: slug });
 
-  console.log(product)
+  
 
   return (
     <div className="bg-white">
@@ -44,7 +31,11 @@ export default async function  ProductDetail({ params }: Props) {
                 >
                   <span className="sr-only">{product.name}</span>
                   <span className="absolute inset-0 overflow-hidden rounded-md">
-                    <img alt={product.image!.altText!} src={product.image!.sourceUrl!} className="h-full w-full object-cover object-center" />
+                    <img
+                      alt={product.image!.altText!}
+                      src={product.image!.sourceUrl!}
+                      className="h-full w-full object-cover object-center"
+                    />
                   </span>
                   <span
                     aria-hidden="true"
@@ -57,7 +48,7 @@ export default async function  ProductDetail({ params }: Props) {
             <TabPanels className="aspect-h-1 aspect-w-1 w-full">
               <TabPanel key={product.id}>
                 <img
-                  alt={product.image!.altText!} 
+                  alt={product.image!.altText!}
                   src={product.image!.sourceUrl!}
                   className="h-full w-full object-cover object-center sm:rounded-lg"
                 />
@@ -67,46 +58,7 @@ export default async function  ProductDetail({ params }: Props) {
 
           {/* Product info */}
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.name}</h1>
-            <FavProduct/>
-            </div>
-            <div className="mt-3">
-              <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">{product.price} €</p>
-            
-            </div>
-
-            {/* Reviews */}
-            <div className="mt-3">
-              <h3 className="sr-only">Reviews</h3>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3, 4].map((rating) => (
-                    <StarIcon
-                      key={rating}
-                      aria-hidden="true"
-                      className={classNames(
-                        product.averageRating && product.averageRating > rating ? 'text-indigo-500' : 'text-gray-300',
-                        'h-5 w-5 flex-shrink-0',
-                      )}
-                    />
-                  ))}
-                </div>
-                <p className="sr-only">{product.averageRating} out of 5 stars</p>
-              </div>
-            </div>
-         
-            <p className=" mt-4 tracking-tight text-gray-700">10 ml.</p>
-
-            <div className="mt-2 space-y-6 text-base text-gray-700"   dangerouslySetInnerHTML={{ __html: product.description || '' }}/>
-
-            <form className="mt-6">
-              <div className="mt-10 flex">
-                  <ProductButtons product={product}/>
-              </div>
-            </form>
-
+            <ProductInfo product={product} />
           </div>
         </div>
       </div>

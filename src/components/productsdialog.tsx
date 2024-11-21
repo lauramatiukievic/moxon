@@ -6,7 +6,7 @@ import { useState } from "react";
 export const filters = [
     {
       id: 'color',
-      name: 'Filtravimas pagal ką nors',
+      name: 'Veidui',
       options: [
         { value: 'white', label: 'White', checked: false },
         { value: 'beige', label: 'Beige', checked: false },
@@ -18,7 +18,7 @@ export const filters = [
     },
     {
       id: 'size',
-      name: 'Filtravimas pagal ką nors',
+      name: 'Plaukams',
       options: [
         { value: '2l', label: '2L', checked: false },
         { value: '6l', label: '6L', checked: false },
@@ -29,11 +29,11 @@ export const filters = [
       ],
     },
   ]
-export const subCategories = [
-    { name: 'Veidui', href: '#' },
-    { name: 'Plaukams', href: '#' },
-    { name: 'Kūnui', href: '#' },
-  ]
+// export const subCategories = [
+//     { name: 'Veidui', href: '#' },
+//     { name: 'Plaukams', href: '#' },
+//     { name: 'Kūnui', href: '#' },
+//   ]
   
 const MobileDialog = ()=>{
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -64,7 +64,7 @@ const MobileDialog = ()=>{
     {/* Filters */}
     <form className="mt-4 border-t border-gray-200">
       <h3 className="sr-only">Categories</h3>
-      <ul role="list" className="px-2 py-3 font-medium text-gray-900">
+      {/* <ul role="list" className="px-2 py-3 font-medium text-gray-900">
         {subCategories.map((category) => (
           <li key={category.name}>
             <a href={category.href} className="block px-2 py-3">
@@ -72,7 +72,7 @@ const MobileDialog = ()=>{
             </a>
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       {filters.map((section) => (
         <Disclosure key={section.id} as="div" className="border-t border-gray-200 px-4 py-6">

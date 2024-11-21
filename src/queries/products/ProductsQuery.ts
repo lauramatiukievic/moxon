@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 
 export const ProductsQuery = gql`
-  query ProductsQuery {
-  products {
+  query ProductsQuery($categoryIds: [Int]) {
+  products(where: {categoryIdIn: $categoryIds}) {
     edges {
       node {
-        ... on SimpleProduct {
+        ... on VariableProduct {
           id
           name
           image {
@@ -16,6 +16,13 @@ export const ProductsQuery = gql`
           averageRating
           reviewCount
           slug
+          productCategories {
+            edges {
+              node {
+                id
+              }
+            }
+          }
         }
       }
     }

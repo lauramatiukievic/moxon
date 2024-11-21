@@ -1,5 +1,5 @@
 "use client";
-import { SimpleProduct } from '@/gql/graphql';
+import { VariableProduct } from '@/gql/graphql';
 import { StarIcon } from '@heroicons/react/20/solid'
 import { useMobileContext } from './mobileContext';
 
@@ -10,8 +10,9 @@ function classNames(...classes: string[]) {
 }
 
 interface Props {
-    products: SimpleProduct[]
+    products: VariableProduct[]
 }
+
 
 export default function ProductList({ products }: Props) {
 
@@ -67,7 +68,11 @@ export default function ProductList({ products }: Props) {
                     </div>
                     <p className="mt-1 text-sm text-gray-500">{product.reviewCount} reviews</p>
                   </div>
-                  <p className="mt-4 text-base font-medium text-gray-900">{product.price}</p>
+                  <p className="mt-4 text-base font-medium text-gray-900">
+  {typeof product.price === 'string' && product.price.includes(',')
+    ? `${Math.min(...product.price.split(',').map(p => parseFloat(p.trim())))} €`
+    : `${product.price} €`}
+</p>
                 </div>
               </div>
             </div>

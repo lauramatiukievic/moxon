@@ -1,5 +1,7 @@
 import { draftMode } from "next/headers";
 import { Inter } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "@/app/globals.css";
 
@@ -27,7 +29,9 @@ export default function RootLayout({
           <MobileProvider>
             <Header />
             {children}
+            <ToastContainer theme="colored" position="bottom-right" autoClose={3000} hideProgressBar={false} toastClassName="custom-toast" />
           </MobileProvider>
+          
         </ShoppingBagProvider>
       </body>
     </html>

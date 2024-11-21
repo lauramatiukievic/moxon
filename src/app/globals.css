@@ -15,6 +15,21 @@ body {
 }
 
 body {
-  color: #fff;
-  background: #000;
+  color:#000;
+  background: #fff;
 }
+
+.custom-toast {
+  background-color: white !important; /* White background */
+  color: black !important; /* Black text */
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-toast .Toastify__progress-bar {
+  	background-color: rgb(79 70 229);
+}
+
+
+
