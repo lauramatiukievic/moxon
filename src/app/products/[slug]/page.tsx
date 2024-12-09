@@ -1,4 +1,4 @@
-// ProductDetail.tsx
+
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { ProductQuery } from '@/queries/products/ProductQuery';

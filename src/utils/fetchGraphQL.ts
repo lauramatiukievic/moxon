@@ -1,45 +1,27 @@
-import { draftMode, cookies } from "next/headers";
-
 export async function fetchGraphQL<T = any>(
   query: string,
   variables?: { [key: string]: any },
   headers?: { [key: string]: string },
 ): Promise<T> {
-  const { isEnabled: preview } = draftMode();
-
   try {
-    let authHeader = "";
-    if (preview) {
-      const auth = cookies().get("wp_jwt")?.value;
-      if (auth) {
-        authHeader = `Bearer ${auth}`;
-      }
-    }
-
+    // Build the body for the GraphQL request
     const body = JSON.stringify({
       query,
-      variables: {
-        preview,
-        ...variables,
-      },
+      variables,
     });
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/graphql`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(authHeader && { Authorization: authHeader }),
-          ...headers,
-        },
-        body,
-        cache: preview ? "no-cache" : "default",
-        next: {
-          tags: ["wordpress"],
-        },
+    
+    // Make the fetch request
+    const response = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/graphql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+        // Use the WP_USER and WP_APP_PASS for basic authentication if needed
+        Authorization: `Basic ${btoa(`${process.env.WP_USER}:${process.env.WP_APP_PASS}`)}`,
       },
-    );
+      body,
+    });
 
     if (!response.ok) {
       console.error("Response Status:", response);
