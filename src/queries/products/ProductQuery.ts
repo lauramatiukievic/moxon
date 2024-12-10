@@ -38,7 +38,17 @@ export const ProductQuery = gql`
             }
           }
         }
+        galleryImages {
+            edges {
+              node {
+                id
+                sourceUrl
+                altText
+              }
+            }
+          }
       }
     }
   }
 `;
+
