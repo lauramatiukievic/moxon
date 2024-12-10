@@ -1,5 +1,5 @@
 "use client"
-import { MagnifyingGlassIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ShoppingBagIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import Image from 'next/image';
 import { useShoppingBag } from '@/components/shoppingBagContext'
@@ -47,10 +47,24 @@ export default function Header() {
 
             <div className="flex flex-1 items-center justify-end">
               {/* Search */}
-              <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
-                <span className="sr-only">Paieška</span>
-                <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
-              </a>
+              <div className="flex space-x-8">
+                        <div className="hidden lg:flex">
+                          <a href="#" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">Search</span>
+                            <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
+                          </a>
+                        </div>
+
+                        <div className="flex">
+                          <Link href="/signIn" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">Account</span>
+                            <UserIcon aria-hidden="true" className="size-6" />
+                          </Link>
+                        </div>
+                      </div>
+
+                      <span aria-hidden="true" className="mx-4 h-6 w-px bg-gray-200 lg:mx-6" />
+
 
               {/* Cart */}
               <Popover className="ml-4 flow-root text-sm lg:relative lg:ml-8">
