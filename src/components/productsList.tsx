@@ -24,8 +24,8 @@ export default function ProductList({ products }: Props) {
   const { sortOrder } = useMobileContext()
 
   const sortedProducts = [...products].sort((a, b) => {
-    const priceA = parseFloat(a.price!.replace('$', ''));
-    const priceB = parseFloat(b.price!.replace('$', ''));
+    const priceA = a.price ? parseFloat(a.price.replace('$', '')) : 0;
+    const priceB = b.price ? parseFloat(b.price.replace('$', '')) : 0;
     return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
   });
 

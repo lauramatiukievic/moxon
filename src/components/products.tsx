@@ -18,6 +18,10 @@ interface Props {
 function Products
     ({ products, categories }: Props) {
 
+        if (!products || !categories) {
+            return null;
+        }
+
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [filteredProducts, setFilteredProducts] = useState<VariableProduct[]>(products)
 

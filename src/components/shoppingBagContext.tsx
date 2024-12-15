@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductAttribute, VariableProduct } from '@/gql/graphql';
+import { VariableProduct } from '@/gql/graphql';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from "react-toastify";
 
