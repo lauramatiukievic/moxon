@@ -13,12 +13,15 @@ export interface Product {
   }
 
 export enum ProductAttributes {
- SIZE = 'pa_size'
+ SIZE = 'pa_size',
+ COLOR = 'pa_color'
 }
+
 
 export interface CategoryOption {
   value: string;
   label: string;
+  slug: string;
   checked: boolean;
 }
 
@@ -26,4 +29,24 @@ export interface Category {
   id: string;
   name: string;
   options: CategoryOption[];
+}
+export interface AuthUser {
+  id: string
+  name: string
+  token: string
+}
+
+export interface LoginResponse {
+  login: {
+    authToken: string
+    user: AuthUser
+  }
+}
+
+export interface Session {
+  accessToken: string
+  user: {
+    id: string
+    name: string
+  }
 }

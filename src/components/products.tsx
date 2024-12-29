@@ -25,6 +25,8 @@ function Products
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [filteredProducts, setFilteredProducts] = useState<VariableProduct[]>(products)
 
+    console.log(filteredProducts)
+
     const updateSelectedCategories = (updatedCategories: string[]) => {
         setSelectedCategories(updatedCategories);
     

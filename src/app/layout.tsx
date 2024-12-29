@@ -8,8 +8,10 @@ import "@/app/globals.css";
 import Navigation from "@/components/Globals/Navigation/Navigation";
 import { PreviewNotice } from "@/components/Globals/PreviewNotice/PreviewNotice";
 import { ShoppingBagProvider } from "@/components/shoppingBagContext";
+
 import Header from "@/components/header";
 import { MobileProvider } from "@/components/mobileContext";
+import { AuthProvider } from "@/components/authorization";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,16 +25,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* {isEnabled && <PreviewNotice />}
-        <Navigation /> */}
-        <ShoppingBagProvider>
-          <MobileProvider>
-            <Header />
-            {children}
-            <ToastContainer theme="colored" position="bottom-right" autoClose={3000} hideProgressBar={false} toastClassName="custom-toast" />
-          </MobileProvider>
-          
-        </ShoppingBagProvider>
+        <AuthProvider>
+          <ShoppingBagProvider>
+            <MobileProvider>
+              <Header />
+              {children}
+              <ToastContainer
+                theme="colored"
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                toastClassName="custom-toast"
+              />
+            </MobileProvider>
+          </ShoppingBagProvider>
+        </AuthProvider>
       </body>
     </html>
   );

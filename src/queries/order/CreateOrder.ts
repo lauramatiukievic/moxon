@@ -10,4 +10,5 @@ mutation CreateOrder($input: CreateOrderInput!) {
     }
   }
 }
-`;
+
+`

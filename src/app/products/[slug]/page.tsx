@@ -1,4 +1,3 @@
-
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { ProductQuery } from '@/queries/products/ProductQuery';
@@ -14,55 +13,42 @@ export default async function ProductDetail({ params }: Props) {
   const { slug } = params;
   const { product } = await fetchGraphQL<{ product: VariableProduct }>(print(ProductQuery), { id: slug });
 
-  console.log(product.name, "vardaaas")
+  const categories = product.productCategories?.edges.map(({ node }) => 
+    node as { id: string; name: string; slug: string }
+  );
 
   return (
     <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 lg:max-w-7xl lg:px-8">
+        {/* Breadcrumb */}
+        {categories && categories.length > 0 && (
+          <nav className="text-sm mb-6">
+            <ul className="flex space-x-2">
+              {categories.map((category, index) => (
+                <li key={category.id} className="flex items-center">
+                  <a href={`/category/${category.slug}`} className="text-gray-500 hover:text-gray-700">
+                    {category.name}
+                  </a>
+                  {index < categories.length - 1 && <span className="mx-2 text-gray-400">/</span>}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        {/* Product Gallery */}
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+          <div>
+            <img
+              alt={product.image?.altText || 'Product image'}
+              src={product.image?.sourceUrl || ''}
+              className="h-full w-full object-cover object-center sm:rounded-lg"
+            />
+          </div>
 
-
-
-
-          {/* Image gallery */}
-          <TabGroup className="flex flex-col-reverse">
-            {/* Image selector */}
-            <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-              {product.galleryImages?.edges && product.galleryImages.edges.length > 0 && (
-                <TabList className="grid grid-cols-4 gap-6">
-                  {product.galleryImages.edges.map(({ node }: { node: any }) => (
-                    <Tab
-                      key={node.id}
-                      className="group relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-indigo-500/50 focus:ring-offset-4"
-                    >
-                      <span className="sr-only">{node.altText}</span>
-                      <span className="absolute inset-0 overflow-hidden rounded-md">
-                        <img alt={node.altText} src={node.sourceUrl} className="size-full object-cover" />
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 group-data-[selected]:ring-indigo-500"
-                      />
-                    </Tab>
-                  ))}
-                </TabList>
-              )}
-            </div>
-
-            <TabPanels className="aspect-h-1 aspect-w-1 w-full">
-              <TabPanel key={product.id}>
-                <img
-                  alt={product.image!.altText!}
-                  src={product.image!.sourceUrl!}
-                  className="h-full w-full object-cover object-center sm:rounded-lg"
-                />
-              </TabPanel>
-            </TabPanels>
-          </TabGroup>
-
-          {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <ProductInfo product={product} />
+          {/* Product Info */}
+          <div className="mt-10 lg:mt-0">
+          <ProductInfo product={product}/>
           </div>
         </div>
       </div>

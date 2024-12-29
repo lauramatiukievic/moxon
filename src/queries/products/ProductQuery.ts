@@ -47,6 +47,15 @@ export const ProductQuery = gql`
               }
             }
           }
+          productCategories {
+            edges {
+              node {
+                id
+                slug
+                name
+              }
+            }
+          }
       }
     }
   }

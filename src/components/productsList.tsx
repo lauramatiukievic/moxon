@@ -20,6 +20,7 @@ export default function ProductList({ products }: Props) {
     return <div>No products available</div>;
   }
 
+  console.log(products)
 
   const { sortOrder } = useMobileContext()
 

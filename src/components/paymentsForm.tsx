@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { CREATE_ORDER_MUTATION } from '@/queries/order/OrderQuery';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { useShoppingBag } from './shoppingBagContext';
 import { print } from 'graphql';
 import { RadioGroup, Radio } from '@headlessui/react';
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import PaymentSelection from './paymentsSection';
+import { CREATE_ORDER_MUTATION } from '@/queries/order/CreateOrder';
 
 
 const deliveryMethods = [
@@ -55,11 +55,12 @@ export default  function PaymentForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
   
     const lineItems = shoppingBag.map((item) => ({
-        productId: parseInt(atob(item.id).split(':')[1], 10), // Decode base64 and extract the integer
-        quantity: item.quantity,
-      }));
+      productId: parseInt(atob(item.id).split(':')[1], 10), // Decode base64 and extract the integer
+      quantity: item.quantity,
+    }));
   
     const orderData = {
         paymentMethod: "cod",
@@ -89,16 +90,16 @@ export default  function PaymentForm() {
   
       console.log("Order Data Sent to GraphQL:", orderData); // Log the order data before sending
   
-    try {
-      const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData });
-      console.log("GraphQL Response:", response);
-  
-      // Handle success
-      alert("Order successfully created!");
-    } catch (error) {
-      console.error("GraphQL Error:", error); // Log the GraphQL error
-      alert("Failed to create order. Please try again.");
-    }
+      try {
+        const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData });
+        console.log('GraphQL Response:', response);
+        alert('Order successfully created!');
+      } catch (error) {
+        console.error('GraphQL Error:', error);
+        alert('Failed to create order. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
   };
   
   
@@ -466,6 +467,7 @@ export default  function PaymentForm() {
       isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
     }`}
     disabled={isSubmitting}
+    
   >
     {isSubmitting ? 'Placing Order...' : 'Confirm Order'}
   </button>
