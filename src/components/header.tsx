@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { useShoppingBag } from '@/components/shoppingBagContext'
 import logo from '@/app/images/IMG_2019.jpeg'
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 
 
 const navigation = [
@@ -16,6 +18,20 @@ const navigation = [
 
 export default function Header() {
   const { shoppingBag } = useShoppingBag();
+  const { data: session, status } = useSession()
+
+  const [isSessionLoaded, setSessionLoaded] = useState(false);
+
+  useEffect(() => {
+    if (status !== 'loading') {
+      setSessionLoaded(true);
+    }
+  }, [status]);
+
+  if (!isSessionLoaded || status === 'loading') {
+    return <div>Loading...</div>; // Or a loading spinner
+  }
+
   return (
     <header className="relative bg-white">
       <nav aria-label="Top" className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -28,8 +44,8 @@ export default function Header() {
                 <Image
                   alt="Your Company Logo"
                   src={logo}
-                  width={48} 
-                  height={48} 
+                  width={48}
+                  height={48}
                   priority
                 />
               </a>
@@ -48,22 +64,34 @@ export default function Header() {
             <div className="flex flex-1 items-center justify-end">
               {/* Search */}
               <div className="flex space-x-8">
-                        <div className="hidden lg:flex">
-                          <a href="#" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
-                            <span className="sr-only">Search</span>
-                            <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
-                          </a>
-                        </div>
+                <div className="hidden lg:flex">
+                  <a href="#" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                    <span className="sr-only">Search</span>
+                    <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
+                  </a>
+                </div>
 
-                        <div className="flex">
-                          <Link href="/signIn" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
-                            <span className="sr-only">Account</span>
-                            <UserIcon aria-hidden="true" className="size-6" />
-                          </Link>
-                        </div>
-                      </div>
+                <div className="flex">
+                  {status === 'authenticated' ?
+                    (<>
+                      <button onClick={() => signOut({redirectTo: '/products'})} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                        <span className="sr-only">Account</span>
+                        <span>Sign out</span>
+                        <UserIcon aria-hidden="true" className="size-6" />
+                      </button></>)
+                    : (<>
+                      <Link href={'/signIn'} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                        <span className="sr-only">Account</span>
+                        <UserIcon aria-hidden="true" className="size-6" />
+                        <span>Sign in</span>
+                      </Link>
+                    </>)
+                  }
 
-                      <span aria-hidden="true" className="mx-4 h-6 w-px bg-gray-200 lg:mx-6" />
+                </div>
+              </div>
+
+              <span aria-hidden="true" className="mx-4 h-6 w-px bg-gray-200 lg:mx-6" />
 
 
               {/* Cart */}
@@ -92,8 +120,8 @@ export default function Header() {
                         shoppingBag.map((product) => (
                           <li key={product.id} className="flex items-center py-6">
                             <Image
-                             alt={product.image?.altText!}
-                             src={product.image?.sourceUrl!}
+                              alt={product.image?.altText!}
+                              src={product.image?.sourceUrl!}
                               className="h-16 w-16 flex-none rounded-md border border-gray-200"
                               width={38}
                               height={38}
@@ -109,11 +137,11 @@ export default function Header() {
                     </ul>
 
                     {shoppingBag.length > 0 && (
-                     <Link href="/payment">
-                     <button className="w-full bg-indigo-600 text-white py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none text-center block">
-                       Apmokėti
-                     </button>
-                   </Link>
+                      <Link href="/payment">
+                        <button className="w-full bg-indigo-600 text-white py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none text-center block">
+                          Apmokėti
+                        </button>
+                      </Link>
                     )}
                     <p className="mt-6 text-center">
                       <a href="/checkout" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">

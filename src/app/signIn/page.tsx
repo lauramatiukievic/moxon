@@ -1,48 +1,46 @@
-'use client';
+'use client'
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/authorization";
-import { print } from "graphql";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { LoginMutation } from "@/queries/order/LoginQuery";
-
+import { signIn, useSession } from "next-auth/react";
+import { AuthError } from "next-auth";
+import { useEffect, useState } from "react";
 
 export default function LoginForm() {
-  const { login } = useAuth();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession(); // Track session state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Local state to track login status
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-  
-    const email = e.currentTarget.email.value;
-    const password = e.currentTarget.password.value;
-  
+    const formData = new FormData(e.target as HTMLFormElement);
+
     try {
-      const response = await fetchGraphQL<{
-        login: { authToken: string; user: { id: string; email: string } };
-      }>(print(LoginMutation), {
-        username: email, // Assuming email is used as the username
-        password,
+      await signIn("credentials", {
+        redirectTo: '/products',
+        username: formData.get('username'),
+        password: formData.get('password')
       });
-  
-      if (!response?.login?.authToken) {
-        throw new Error("Invalid email or password");
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw new Error("Invalid email or password", error);
       }
-  
-      // Save user in context with authToken
-      login(response.login.user.email, response.login.user.id, response.login.authToken);
-  
-      // Redirect to the payment page
-      router.push("/payment");
-    } catch (err: any) {
-      setError(err.message || "Failed to log in");
+      throw error;
     }
   };
-  
+
+  // Watch session state and update the login status
+  useEffect(() => {
+    if (status === "authenticated") {
+      setIsLoggedIn(true); // Set local state when authenticated
+    } else {
+      setIsLoggedIn(false); // Reset when not authenticated
+    }
+  }, [status]);
+
+  // Handle loading state
+  if (status === "loading") {
+    return <div>Loading...</div>; // Optionally, show a loading spinner
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -54,50 +52,57 @@ export default function LoginForm() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-900">
-                Paštas
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                />
+          {!isLoggedIn ? (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+                  Paštas
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    name="username"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
-                Slaptažodis
-              </label>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                />
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+                  Slaptažodis
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                  />
+                </div>
               </div>
-            </div>
 
-            {error && <p className="text-sm text-red-500">{error}</p>}
-
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Prisijungti
+                </button>
+              </div>
+            </form>
+          ) : (
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Prisijungti
-              </button>
+              <p>Welcome, {session?.user?.name}</p>
+              <Link href="/products">
+                <a className="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                  Go to Products
+                </a>
+              </Link>
             </div>
-          </form>
+          )}
+
           <div>
             <p className="mt-10 text-center text-sm text-gray-500">
               Norite susikurti paskyrą?{" "}

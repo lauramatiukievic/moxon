@@ -8,6 +8,7 @@ import { RadioGroup, Radio } from '@headlessui/react';
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import PaymentSelection from './paymentsSection';
 import { CREATE_ORDER_MUTATION } from '@/queries/order/CreateOrder';
+import { useSession } from 'next-auth/react';
 
 
 const deliveryMethods = [
@@ -22,6 +23,7 @@ const paymentMethods = [
 
 
 export default  function PaymentForm() {
+  const { data: session } = useSession()
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
     const { shoppingBag, removeFromBag } = useShoppingBag(); 
@@ -91,7 +93,7 @@ export default  function PaymentForm() {
       console.log("Order Data Sent to GraphQL:", orderData); // Log the order data before sending
   
       try {
-        const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData });
+        const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData }, session);
         console.log('GraphQL Response:', response);
         alert('Order successfully created!');
       } catch (error) {

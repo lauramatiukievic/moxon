@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     { slug: notFoundPageWordPressId, idType: "DATABASE_ID" },
   );
 
-  const metadata = setSeoData({ seo: contentNode.seo });
+  const metadata = contentNode ? setSeoData({ seo: contentNode.seo }) : {};
 
   return {
     ...metadata,
@@ -31,5 +31,5 @@ export default async function NotFound() {
     id: notFoundPageWordPressId,
   });
 
-  return <div dangerouslySetInnerHTML={{ __html: page.content || " " }} />;
+  return page ? <div dangerouslySetInnerHTML={{ __html: page.content || " " }} /> : <></>;
 }

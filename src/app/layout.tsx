@@ -11,7 +11,7 @@ import { ShoppingBagProvider } from "@/components/shoppingBagContext";
 
 import Header from "@/components/header";
 import { MobileProvider } from "@/components/mobileContext";
-import { AuthProvider } from "@/components/authorization";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <SessionProvider>
           <ShoppingBagProvider>
             <MobileProvider>
               <Header />
@@ -39,7 +39,7 @@ export default function RootLayout({
               />
             </MobileProvider>
           </ShoppingBagProvider>
-        </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );

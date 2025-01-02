@@ -1,10 +1,13 @@
+import { Session } from "next-auth";
+
 export async function fetchGraphQL<T = any>(
   query: string,
   variables?: { [key: string]: any },
+  session?: Session | null,
   headers?: { [key: string]: string },
 ): Promise<T> {
   try {
-    // Build the body for the GraphQL request
+
     const body = JSON.stringify({
       query,
       variables,
@@ -12,9 +15,10 @@ export async function fetchGraphQL<T = any>(
 
     let authToken: string | null = null;
 
-    if (typeof window !== 'undefined') {
-      const user = localStorage.getItem('user')
-      if (user) authToken = JSON.parse(user).authToken;
+    console.log('session data: ', session)
+    if (session && session.accessToken) {
+      console.log('adding token to fetchGraphQL')
+      authToken = session.accessToken      
     }
 
     let requestHeaders: HeadersInit = {
