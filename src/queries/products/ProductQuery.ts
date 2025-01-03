@@ -7,6 +7,7 @@ export const ProductQuery = gql`
       ... on VariableProduct {
         id
         name
+        databaseId
         description
         image {
           altText
@@ -29,6 +30,7 @@ export const ProductQuery = gql`
               id
               price(format: RAW)
               stockQuantity
+              databaseId
               attributes {
                 nodes {
                   name

@@ -9,6 +9,9 @@ import { CheckCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import PaymentSelection from './paymentsSection';
 import { CREATE_ORDER_MUTATION } from '@/queries/order/CreateOrder';
 import { useSession } from 'next-auth/react';
+import Select, { SingleValue } from 'react-select';
+import countries from 'world-countries';
+import i18nIsoCountries from 'i18n-iso-countries';
 
 
 const deliveryMethods = [
@@ -26,8 +29,27 @@ export default  function PaymentForm() {
   const { data: session } = useSession()
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
-    const { shoppingBag, removeFromBag } = useShoppingBag(); 
-//   const { shoppingBag } = useShoppingBag();
+    const { shoppingBag, removeFromBag, clearBag } = useShoppingBag(); 
+
+
+    i18nIsoCountries.registerLocale(require('i18n-iso-countries/langs/lt.json'));
+
+    // Map countries to Lithuanian names
+    const countryOptions = countries.map((country) => ({
+      value: country.cca2, // ISO 3166-1 alpha-2 code
+      label: i18nIsoCountries.getName(country.cca2, 'lt') || country.name.common, // Lithuanian name or fallback
+    }));
+    
+   
+const handleCountryChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
+  setBillingDetails({
+    ...billingDetails,
+    country: selectedOption?.value || '', 
+  });
+};
+    
+
+
   const [billingDetails, setBillingDetails] = useState({
     firstName: '',
     lastName: '',
@@ -60,8 +82,9 @@ export default  function PaymentForm() {
     setIsSubmitting(true);
   
     const lineItems = shoppingBag.map((item) => ({
-      productId: parseInt(atob(item.id).split(':')[1], 10), // Decode base64 and extract the integer
+      productId: item.databaseId, // Decode base64 and extract the integer
       quantity: item.quantity,
+      variationId: item.variationId
     }));
   
     const orderData = {
@@ -96,6 +119,7 @@ export default  function PaymentForm() {
         const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData }, session);
         console.log('GraphQL Response:', response);
         alert('Order successfully created!');
+        clearBag()
       } catch (error) {
         console.error('GraphQL Error:', error);
         alert('Failed to create order. Please try again.');
@@ -209,21 +233,20 @@ export default  function PaymentForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-                      Šalis
-                    </label>
-                    <div className="mt-1">
-                    <input
-                        id="country"
-                        name="country"
-                        type="text"
-                        autoComplete="address-level2"
-                        value={billingDetails.country}
-                        onChange={handleBillingChange}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
+  <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+    Šalis
+  </label>
+  <div className="mt-1">
+    <Select
+      id="country"
+      options={countryOptions}
+      onChange={handleCountryChange}
+      value={countryOptions.find(option => option.value === billingDetails.country)}
+      placeholder="Pasirinkite šalį"
+      className="w-full rounded-md border-gray-300 shadow-sm"
+    />
+  </div>
+</div>
 
                   <div>
                     <label htmlFor="postal-code" className="block text-sm font-medium text-gray-700">
@@ -487,3 +510,4 @@ export default  function PaymentForm() {
     </div>
   );
 }
+

@@ -2,6 +2,7 @@
 import { VariableProduct } from '@/gql/graphql';
 import { StarIcon } from '@heroicons/react/20/solid'
 import { useMobileContext } from './mobileContext';
+import { extractLowestPrice } from './products';
 
 
 
@@ -25,10 +26,13 @@ export default function ProductList({ products }: Props) {
   const { sortOrder } = useMobileContext()
 
   const sortedProducts = [...products].sort((a, b) => {
-    const priceA = a.price ? parseFloat(a.price.replace('$', '')) : 0;
-    const priceB = b.price ? parseFloat(b.price.replace('$', '')) : 0;
+    const priceA = extractLowestPrice(a.price);
+    const priceB = extractLowestPrice(b.price);
+  
     return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
   });
+  
+  
 
   return (
     <div className="bg-white">
@@ -69,11 +73,10 @@ export default function ProductList({ products }: Props) {
                     </div>
                     <p className="mt-1 text-sm text-gray-500">{product.reviewCount} reviews</p>
                   </div>
-                  <p className="mt-4 text-base font-medium text-gray-900">
-  {typeof product.price === 'string' && product.price.includes(',')
-    ? `${Math.min(...product.price.split(',').map(p => parseFloat(p.trim())))} €`
-    : `${product.price} €`}
+<p className="mt-4 text-base font-medium text-gray-900">
+  {extractLowestPrice(product.price) === Infinity ? 'N/A' : `${extractLowestPrice(product.price)} €`}
 </p>
+
                 </div>
               </div>
             </div>

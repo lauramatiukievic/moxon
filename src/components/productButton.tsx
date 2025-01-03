@@ -1,18 +1,23 @@
 'use client';
 
-import { VariableProduct } from '@/gql/graphql';
+import { ProductAttribute, VariableProduct } from '@/gql/graphql';
 import { BagItem, useShoppingBag } from "./shoppingBagContext";
+import { useState } from 'react';
 
 interface Props {
   product: VariableProduct;
   selectedPrice: string | null;
   stockQuantity: number | null;
   selectedSize: string | null;
+  savedVariation: number | null;
+  selectedColor: string | null 
 }
 
-export const ProductButtons = ({ product, selectedPrice, stockQuantity, selectedSize }: Props) => {
+export const ProductButtons = ({ product, selectedPrice, stockQuantity, selectedSize, savedVariation, selectedColor }: Props) => {
   const { addToBag, shoppingBag } = useShoppingBag();
-  console.log("Selected Size in ProductButtons:", selectedSize);
+
+  const [sizeValidation, setSizeValidation] = useState<string | null>(null);
+const [colorValidation, setColorValidation] = useState<string | null>(null);
 
   const currentQuantityInBag =
     shoppingBag.find(
@@ -22,7 +27,39 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
   const isAtStockLimit = stockQuantity !== null && currentQuantityInBag >= stockQuantity;
   const isOutOfStock = stockQuantity === 0;
 
+  const validateSelections = () => {
+    let isValid = true;
+  
+    // Validate size selection
+    if (!selectedSize) {
+      setSizeValidation('Reikia pasirinkti dydį, kad galėtumėte pridėti į krepšelį.');
+      isValid = false;
+    } else {
+      setSizeValidation(null); // Clear validation message if size is valid
+    }
+  
+    // Validate color selection (only if color attributes exist)
+    const hasColorAttributes = product.attributes?.nodes?.some(
+      (attr: ProductAttribute) => attr.name === 'pa_color'
+    );
+  
+    if (hasColorAttributes && !selectedColor) {
+      setColorValidation('Reikia pasirinkti spalvą, kad galėtumėte pridėti į krepšelį.');
+      isValid = false;
+    } else {
+      setColorValidation(null); // Clear validation message if color is valid
+    }
+  
+    return isValid;
+  };
+  
+  
+
   const handleAddToBag = () => {
+
+    if (!validateSelections()) {
+      return;
+    }
     if (!selectedPrice) {
       console.error("Price not selected");
       return;
@@ -30,6 +67,17 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
 
     if (!selectedSize) {
       console.error("Size not selected");
+      return;
+    }
+    
+    const colorAttributes = product.attributes?.nodes?.filter(
+        (attr: ProductAttribute) => attr.name === 'pa_color'
+      );
+
+    console.log('Has color attributes')
+
+    if (colorAttributes && colorAttributes.length > 0 && !selectedColor) {
+      console.error("Color not selected");
       return;
     }
 
@@ -46,9 +94,12 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
     const newItem: BagItem = {
       ...product,
       selectedSize,
+      selectedColor: selectedColor || null,
       price: selectedPrice,
       quantity: 1,
+      savedVariation: savedVariation || 0,
       stockQuantity: stockQuantity || 0,
+      variationId: savedVariation || 0
     };
 
     console.log("Adding to bag:", newItem); // Debugging
@@ -65,6 +116,9 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
       >
         Pridėti į krepšelį
       </button>
+      {sizeValidation && <p className="mt-2 text-sm text-red-500">{sizeValidation}</p>}
+      {colorValidation && <p className="mt-2 text-sm text-red-500">{colorValidation}</p>}
+
       {stockQuantity !== null && isOutOfStock ? (
         <p className="mt-2 text-sm text-red-500">Atsiprašome šiuo metu prekės sandelyje nėra.</p>
       ) : isAtStockLimit ? (

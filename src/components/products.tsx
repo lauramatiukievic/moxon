@@ -8,7 +8,14 @@ import FilterButtons from "./filter-buttons"
 import MobileDialog from "./productsdialog"
 import ProductList from "./productsList"
 import ProductsSort from "./productsSort"
-import { SyntheticEvent, useState } from "react"
+import { SyntheticEvent, useEffect, useState } from "react"
+
+
+export const extractLowestPrice = (price: string | null | undefined): number => {
+    if (!price) return Infinity; // Use Infinity for products without a price
+    const priceValues = price.split(',').map((p) => parseFloat(p.trim()) || Infinity);
+    return Math.min(...priceValues);
+  };
 
 interface Props {
     products: VariableProduct[],
@@ -22,10 +29,30 @@ function Products
             return null;
         }
 
+        
+        const [sortOrder, setSortOrder] = useState<string>('asc');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [filteredProducts, setFilteredProducts] = useState<VariableProduct[]>(products)
 
-    console.log(filteredProducts)
+
+    const sortProducts = (order: string) => {
+        const sortedProducts = [...filteredProducts].sort((a, b) => {
+          const priceA = extractLowestPrice(a.price);
+          const priceB = extractLowestPrice(b.price);
+      
+          return order === 'asc' ? priceA - priceB : priceB - priceA;
+        });
+      
+        setFilteredProducts(sortedProducts);
+      };
+      
+      
+
+      const handleSortChange = (order: string) => {
+        setSortOrder(order);
+        sortProducts(order);
+      };
+
 
     const updateSelectedCategories = (updatedCategories: string[]) => {
         setSelectedCategories(updatedCategories);
@@ -82,7 +109,7 @@ function Products
                         <MobileDialog />
                         <div className='gap-2'>
                             <FilterButtons />
-                            <ProductsSort />
+                            {/* <ProductsSort onSortChange={handleSortChange} /> */}
                         </div>
                     </div>
 

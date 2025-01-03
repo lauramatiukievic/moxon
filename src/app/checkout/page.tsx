@@ -67,6 +67,9 @@ const handleIncreaseQuantity = (product: BagItem) => {
                           <p className="text-sm mt-2  text-gray-600">
                             {product.price} € / {product.selectedSize} ml.
                           </p>
+                          <p className="text-gray-600">  {product.selectedColor
+    ? product.selectedColor.charAt(0).toUpperCase() + product.selectedColor.slice(1).toLowerCase()
+    : ''}</p>
                           </div>
                           <p className="ml-4 text-sm font-medium text-gray-900">
                             {(parseFloat(product.price ?? "0") * product.quantity).toFixed(2)} €

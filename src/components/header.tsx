@@ -7,6 +7,7 @@ import logo from '@/app/images/IMG_2019.jpeg'
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import { getColorFromSlug } from './productPricesWithSize';
 
 
 const navigation = [
@@ -63,7 +64,7 @@ export default function Header() {
 
             <div className="flex flex-1 items-center justify-end">
               {/* Search */}
-              <div className="flex space-x-8">
+              <div className="flex  space-x-8">
                 <div className="hidden lg:flex">
                   <a href="#" className="-m-2 p-2 text-gray-400 hover:text-gray-500">
                     <span className="sr-only">Search</span>
@@ -74,16 +75,16 @@ export default function Header() {
                 <div className="flex">
                   {status === 'authenticated' ?
                     (<>
-                      <button onClick={() => signOut({redirectTo: '/products'})} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                      <button onClick={() => signOut({ redirectTo: '/products' })} className="flex row-auto -m-2 p-2 text-gray-400 hover:text-gray-500">
                         <span className="sr-only">Account</span>
-                        <span>Sign out</span>
                         <UserIcon aria-hidden="true" className="size-6" />
+                        <span className='pl-2'>Atsijungti</span>
                       </button></>)
                     : (<>
-                      <Link href={'/signIn'} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                      <Link href={'/signIn'} className="flex row-auto -m-2 p-2 text-gray-400 hover:text-gray-500">
                         <span className="sr-only">Account</span>
                         <UserIcon aria-hidden="true" className="size-6" />
-                        <span>Sign in</span>
+                        <span className='pl-2'>Prisijungti</span>
                       </Link>
                     </>)
                   }
@@ -127,10 +128,30 @@ export default function Header() {
                               height={38}
                             />
                             <div className="ml-4 flex-auto">
-                              <h3 className="font-medium text-gray-900">{product.name}</h3>
-                              <p className="text-gray-500">{product.price}  € </p>
+                              <div className='flex row-auto justify-between '>
+                              <h3 className="font-medium text-gray-900 text-base">{product.name}</h3>
+                              <p className="text-gray-500">{product.price} €</p>
+                              </div>
+                           
                               <p className="text-gray-500">Kiekis: {product.quantity ?? 1}</p> {/* Display quantity */}
+
+                              {/* Show color */}
+                              {product.selectedColor && (
+                                <div className="flex items-center space-x-2">
+                                  <div
+                                    className="w-4 h-4 rounded-full border border-gray-300"
+                                    style={{
+                                      backgroundColor: getColorFromSlug(product.selectedColor),
+                                    }}
+                                  ></div>
+                                  {/* <p className="text-gray-600 ">
+                                    {product.selectedColor.charAt(0).toUpperCase() +
+                                      product.selectedColor.slice(1).toLowerCase()}
+                                  </p> */}
+                                </div>
+                              )}
                             </div>
+
                           </li>
                         ))
                       )}

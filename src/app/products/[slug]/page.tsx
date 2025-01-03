@@ -1,7 +1,6 @@
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { ProductQuery } from '@/queries/products/ProductQuery';
-import { ProductGalleryImagesArgs, VariableProduct } from '@/gql/graphql';
+import {  VariableProduct } from '@/gql/graphql';
 import { print } from 'graphql';
 import ProductInfo from '@/components/productInfo';
 
