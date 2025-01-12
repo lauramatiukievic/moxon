@@ -11,6 +11,7 @@ import PageTemplate from "@/components/Templates/Page/PageTemplate";
 import { nextSlugToWpSlug } from "@/utils/nextSlugToWpSlug";
 import PostTemplate from "@/components/Templates/Post/PostTemplate";
 import { SeoQuery } from "@/queries/general/SeoQuery";
+import HomePage from "@/components/Templates/Home/home";
 
 type Props = {
   params: { slug: string };
@@ -48,6 +49,10 @@ export function generateStaticParams() {
 
 export default async function Page({ params }: Props) {
   const slug = nextSlugToWpSlug(params.slug);
+  if (slug === "/") {
+    return (<HomePage />)
+  }
+
   const isPreview = slug.includes("preview");
   const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
     print(ContentInfoQuery),

@@ -112,7 +112,7 @@ const [colorValidation, setColorValidation] = useState<string | null>(null);
         type="button"
         onClick={handleAddToBag}
         disabled={isAtStockLimit || isOutOfStock}
-        className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+        className="bg-purple-500 flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
       >
         Pridėti į krepšelį
       </button>

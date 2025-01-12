@@ -12,5 +12,7 @@ export default async function PageTemplate({ node }: TemplateProps) {
     id: node.databaseId,
   });
 
-  return <div dangerouslySetInnerHTML={{ __html: page?.content || "" }} />;
+  return (
+  <div className="bg-white"><div className="mx-auto max-w-7xl pt-8 px-4 sm:px-6 lg:px-8" dangerouslySetInnerHTML={{ __html: page?.content || "" }} /> </div>)
+  ;
 }

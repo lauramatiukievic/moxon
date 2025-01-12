@@ -6,23 +6,29 @@ import { useShoppingBag } from './shoppingBagContext';
 import { print } from 'graphql';
 import { RadioGroup, Radio } from '@headlessui/react';
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
-import PaymentSelection from './paymentsSection';
 import { CREATE_ORDER_MUTATION } from '@/queries/order/CreateOrder';
 import { useSession } from 'next-auth/react';
 import Select, { SingleValue } from 'react-select';
 import countries from 'world-countries';
 import i18nIsoCountries from 'i18n-iso-countries';
+import { redirectToPaysera } from '@/utils/checkout-utils';
 
+
+interface PaymentData {
+  projectid: string;
+  orderid: string;
+  accepturl: string;
+  cancelurl: string;
+  callbackurl: string;
+  version: string;
+  amount: number;
+  currency: string;
+}
 
 const deliveryMethods = [
   { id: 1, title: 'Standard', turnaround: '4–10 business days', price: 5.00 },
   { id: 2, title: 'Express', turnaround: '2–5 business days', price: 16.00 },
 ];
-const paymentMethods = [
-  { id: 'credit-card', title: 'Credit card' },
-  { id: 'paypal', title: 'PayPal' },
-  { id: 'etransfer', title: 'eTransfer' },
-]
 
 
 export default function PaymentForm() {
@@ -120,6 +126,18 @@ export default function PaymentForm() {
       console.log('GraphQL Response:', response);
       alert('Order successfully created!');
       clearBag()
+      const projectPassword = "dd813fde7c3bf5f3b947d7d401d8fba4"; // Replace with actual project password
+      const paymentData = {
+        projectid: "248064", // Replace with actual project ID
+        orderid: "unique_order_id_" + Date.now(), // Unique order ID
+        accepturl: "https://yourdomain.com/payment-success",
+        cancelurl: "https://yourdomain.com/payment-cancel",
+        callbackurl: "https://yourdomain.com/api/paysera-callback",
+        version: "1.6",
+        amount: 1000, // Amount in cents (e.g., 1000 = 10.00 EUR)
+        currency: "EUR",
+      };
+      redirectToPaysera(paymentData, projectPassword);
     } catch (error) {
       console.error('GraphQL Error:', error);
       alert('Failed to create order. Please try again.');
@@ -131,7 +149,7 @@ export default function PaymentForm() {
 
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-white">
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:max-w-none">
           <h1 className="sr-only">Apmokėjimas</h1>
@@ -154,7 +172,7 @@ export default function PaymentForm() {
                       autoComplete="email"
                       value={billingDetails.email}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.email && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -181,7 +199,7 @@ export default function PaymentForm() {
                         autoComplete="given-name"
                         value={billingDetails.firstName}
                         onChange={handleBillingChange}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                       />
                       {!billingDetails.firstName && (
                         <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -201,7 +219,7 @@ export default function PaymentForm() {
                       autoComplete="family-name"
                       value={billingDetails.lastName}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.lastName && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -220,7 +238,7 @@ export default function PaymentForm() {
                       autoComplete="street-address"
                       value={billingDetails.address1}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.address1 && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -240,7 +258,7 @@ export default function PaymentForm() {
                       autoComplete="address-level2"
                       value={billingDetails.city}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.city && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -275,7 +293,7 @@ export default function PaymentForm() {
                       autoComplete="postal-code"
                       value={billingDetails.postcode}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.postcode && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -294,7 +312,7 @@ export default function PaymentForm() {
                       autoComplete="tel"
                       value={billingDetails.phone}
                       onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                     />
                     {!billingDetails.phone && (
                       <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
@@ -318,7 +336,7 @@ export default function PaymentForm() {
                         value={deliveryMethod}
                         aria-label={deliveryMethod.title}
                         aria-description={`${deliveryMethod.turnaround} for ${deliveryMethod.price}`}
-                        className="group relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-indigo-500"
+                        className="group relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-purple-500"
                       >
                         <span className="flex flex-1">
                           <span className="flex flex-col">
@@ -331,11 +349,11 @@ export default function PaymentForm() {
                         </span>
                         <CheckCircleIcon
                           aria-hidden="true"
-                          className="h-5 w-5 text-indigo-600 [.group:not([data-checked])_&]:hidden"
+                          className="h-5 w-5 text-purple-600 [.group:not([data-checked])_&]:hidden"
                         />
                         <span
                           aria-hidden="true"
-                          className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
+                          className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-purple-500"
                         />
                       </Radio>
                     ))}
@@ -344,102 +362,7 @@ export default function PaymentForm() {
               </div>
 
               {/* Payment */}
-              <PaymentSelection />
-              {/* <div className="mt-10 border-t border-gray-200 pt-10">
-                <h2 className="text-lg font-medium text-gray-900">Apmokėjimas</h2>
 
-                <fieldset className="mt-4">
-                  <legend className="sr-only">Pasirinkite apmokėjimą</legend>
-                  <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-                    {paymentMethods.map((paymentMethod, paymentMethodIdx) => (
-                      <div key={paymentMethod.id} className="flex items-center">
-                        {paymentMethodIdx === 0 ? (
-                          <input
-                            defaultChecked
-                            id={paymentMethod.id}
-                            name="payment-type"
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          />
-                        ) : (
-                          <input
-                            id={paymentMethod.id}
-                            name="payment-type"
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          />
-                        )}
-
-                        <label htmlFor={paymentMethod.id} className="ml-3 block text-sm font-medium text-gray-700">
-                          {paymentMethod.title}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <div className="mt-6 grid grid-cols-4 gap-x-4 gap-y-6">
-                  <div className="col-span-4">
-                    <label htmlFor="card-number" className="block text-sm font-medium text-gray-700">
-                      Kortelės numeris
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="card-number"
-                        name="card-number"
-                        type="text"
-                        autoComplete="cc-number"
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-span-4">
-                    <label htmlFor="name-on-card" className="block text-sm font-medium text-gray-700">
-                      Banko pavadinimas
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="name-on-card"
-                        name="name-on-card"
-                        type="text"
-                        autoComplete="cc-name"
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-span-3">
-                    <label htmlFor="expiration-date" className="block text-sm font-medium text-gray-700">
-                      Galiojimo data (MM/YY)
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="expiration-date"
-                        name="expiration-date"
-                        type="text"
-                        autoComplete="cc-exp"
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="cvc" className="block text-sm font-medium text-gray-700">
-                      CVC
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="cvc"
-                        name="cvc"
-                        type="text"
-                        autoComplete="csc"
-                        className="block w-full rounded-md text-gray-900 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
 
             {/* Order summary */}
@@ -450,7 +373,7 @@ export default function PaymentForm() {
                 <h3 className="sr-only">Produktai krepšelyje</h3>
                 <ul role="list" className="divide-y divide-gray-200">
                   {shoppingBag.map((product, index) => (
-                    <li key={`${product.id}-${index}`} className="flex px-4 py-6 sm:px-6">
+                    <li key={''+product.savedVariation+product.selectedColor} className="flex px-4 py-6 sm:px-6">
                       <div className="flex-shrink-0">
                         <img alt={product.image?.altText!} src={product.image?.sourceUrl!} className="w-20 rounded-md" />
                       </div>
@@ -507,12 +430,12 @@ export default function PaymentForm() {
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                   <button
                     type="submit"
-                    className={`w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    className={`w-full rounded-md border border-transparent bg-purple-500 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                       }`}
                     disabled={isSubmitting}
 
                   >
-                    {isSubmitting ? 'Placing Order...' : 'Confirm Order'}
+                    {isSubmitting ? 'Užsakymas tvirtinamas...' : 'Patvirtinti užsakymą'}
                   </button>
                 </div>
               </div>

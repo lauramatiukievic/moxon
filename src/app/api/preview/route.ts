@@ -38,6 +38,7 @@ export async function GET(request: Request) {
   );
 
   const authToken = login.authToken;
+  console.log('received token:', authToken)
 
   draftMode().enable();
 

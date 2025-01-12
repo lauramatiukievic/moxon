@@ -32,8 +32,8 @@ export default function ProductSizes({ product, onSizeSelect }: Props) {
               type="button"
               onClick={() => handleSizeSelect(size as string)}
               className={`px-4 py-2 rounded-md border ${
-                selectedSize === size ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700'
-              } hover:bg-indigo-500 hover:text-white transition`}
+                selectedSize === size ? 'bg-purple-600 text-white' : 'bg-white text-gray-700'
+              } hover:bg-purple-500 hover:text-white transition`}
             >
               {size} ml.
             </button>

@@ -86,7 +86,7 @@ const ColorFilter: React.FC<ColorFilterProps> = ({ products, onFilterChange }) =
                   value={color}
                   checked={selectedColors.includes(color)}
                   onChange={handleColorChange}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                 />
                 <label htmlFor={`color-${color}`} className="ml-3 text-sm text-gray-600">
                   {color}

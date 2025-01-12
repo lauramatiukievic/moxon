@@ -11,13 +11,11 @@ export async function fetchGraphQL<T = any>(
     const body = JSON.stringify({
       query,
       variables,
-    });
+    }); 
 
     let authToken: string | null = null;
 
-    console.log('session data: ', session)
     if (session && session.accessToken) {
-      console.log('adding token to fetchGraphQL')
       authToken = session.accessToken      
     }
 
@@ -32,8 +30,6 @@ export async function fetchGraphQL<T = any>(
         Authorization: `Bearer ${authToken}`
       }
     }
-
-    console.log('Request headers:', requestHeaders)
 
     // Make the fetch request
     const response = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/graphql`, {

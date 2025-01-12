@@ -88,7 +88,9 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-2 mt-3">Pasirinkite dydį</h3>
+    <div className='flex flex-row justify-between'>
+      <div>
+      <h3 className="text-lg font-semibold mb-2 mt-3">Pasirinkite dydį:</h3>
       <div className="flex space-x-2">
         {sizeAttributes && sizeAttributes.length > 0 ? (
           sizeAttributes.map((sizeAttr: ProductAttribute) => {
@@ -100,8 +102,8 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
                 type="button"
                 onClick={() => handleSizeSelect(optionValue, selectedColor)}
                 className={`px-4 py-2 rounded-md border ${
-                  selectedSize === optionValue ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700'
-                } hover:bg-indigo-500 hover:text-white transition`}
+                  selectedSize === optionValue ? 'bg-purple-500 text-white' : 'bg-white text-gray-700'
+                } hover:bg-purple-400 hover:text-white transition`}
               >
                 {optionValue} ml.
               </button>
@@ -111,7 +113,9 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
           <p>Šis produktas neturi dydžio</p>
         )}
       </div>
-      <h3 className="text-lg font-semibold mb-2 mt-4">Pasirinkite spalvą</h3>
+      </div>
+      <div>
+      <h3 className="text-lg font-semibold mb-2 mt-4">Pasirinkite spalvą:</h3>
       <div className="flex space-x-2">
   {colorAttributes && colorAttributes.length > 0 ? (
     colorAttributes.map((colorAttr: ProductAttribute) => {
@@ -124,7 +128,7 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
           onClick={() => handleSizeSelect(selectedSize, colorSlug)}
           className={`w-8 h-8 rounded-full border-2 ${
             selectedColor === colorSlug
-              ? 'ring-2 ring-indigo-600 border-indigo-600'
+              ? 'ring-2 ring-purple-500 border-purple-500'
               : 'border-gray-300'
           }`}
           // Use Tailwind's `bg-[colorSlug]` class to dynamically apply background colors
@@ -140,10 +144,13 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
     <p>Šis produktas neturi spalvos</p>
   )}
 </div>
+</div>
       {/* Display selected price */}
-      <p className="mt-4 text-3xl font-medium text-gray-900">
-        {selectedPrice ? `${selectedPrice} €` : 'Pasirinkite dydį, kad matytumėte kainą'}
-      </p>
+    
+    </div>
+      <p className="mt-5 text-xl font-medium text-gray-900">
+      {selectedPrice ? `${selectedPrice} €` : 'Pasirinkite dydį, kad matytumėte kainą'}
+    </p>
     </div>
 
   );

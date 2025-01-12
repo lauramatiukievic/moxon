@@ -62,7 +62,7 @@ export default function LoginForm() {
                   <input
                     id="email"
                     name="username"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm"
                   />
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function LoginForm() {
                     type="password"
                     required
                     autoComplete="current-password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm"
                   />
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function LoginForm() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
                 >
                   Prisijungti
                 </button>
@@ -95,10 +95,9 @@ export default function LoginForm() {
           ) : (
             <div>
               <p>Welcome, {session?.user?.name}</p>
-              <Link href="/products">
-                <a className="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+              <Link href="/products" className="text-sm font-semibold text-purple-600 hover:text-purple-500">
+
                   Go to Products
-                </a>
               </Link>
             </div>
           )}
@@ -106,7 +105,7 @@ export default function LoginForm() {
           <div>
             <p className="mt-10 text-center text-sm text-gray-500">
               Norite susikurti paskyrą?{" "}
-              <Link href="/registration" className="font-semibold text-indigo-600 hover:text-indigo-500">
+              <Link href="/registration" className="font-semibold text-purple-600 hover:text-purple-500">
                 Registruokities čia
               </Link>
             </p>

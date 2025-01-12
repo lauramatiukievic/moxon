@@ -7,7 +7,7 @@ import Products from '@/components/products'
 import { Category } from '@/utils/common-types'
 
 
-export default async function Example() {
+export default async function HomePage() {
 
   const productData = await fetchGraphQL<{ products: { edges: { node: VariableProduct }[] } }>(print(ProductsQuery), {categoryIds: []});
   const categoryData = await fetchGraphQL<{ productCategories: { edges: { node: { id: string, name: string, parentId: string | null, databaseId: number } }[] } }>(print(FilterQuerry));

@@ -1,19 +1,18 @@
 import { draftMode } from "next/headers";
-import { Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "@/app/globals.css";
 
-import Navigation from "@/components/Globals/Navigation/Navigation";
-import { PreviewNotice } from "@/components/Globals/PreviewNotice/PreviewNotice";
 import { ShoppingBagProvider } from "@/components/shoppingBagContext";
 
 import Header from "@/components/header";
 import { MobileProvider } from "@/components/mobileContext";
 import { SessionProvider } from "next-auth/react";
+import Footer from "@/components/footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Montserrat({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -24,7 +23,12 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} relative bg-white overflow-hidden`}>
+        {/* Background Purple Blurs */}
+        {/* <div className="absolute middle-[-150px] left-[-200px] w-[500px] h-[500px] bg-purple-500 blur-[200px] opacity-60 rounded-full"></div>
+        <div className="absolute middle-[100px] left-[200px] w-[700px] h-[700px] bg-indigo-500 blur-[250px] opacity-40 rounded-full"></div> */}
+        <div className="absolute bottom-[-200px] right-[-250px] w-[600px] h-[600px] bg-purple-400 blur-[200px] opacity-50 rounded-full"></div>
+        <div className="absolute bottom-[-200px] right-[-250px] w-[600px] h-[600px] bg-purple-400 blur-[200px] opacity-50 rounded-full"></div>
         <SessionProvider>
           <ShoppingBagProvider>
             <MobileProvider>
@@ -37,6 +41,7 @@ export default function RootLayout({
                 hideProgressBar={false}
                 toastClassName="custom-toast"
               />
+              <Footer />
             </MobileProvider>
           </ShoppingBagProvider>
         </SessionProvider>
