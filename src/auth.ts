@@ -54,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             accessToken: loginData.authToken,
           }
 
-          console.log('authorized, result: ', result)
+          // console.log('authorized, result: ', result)
           // Return user and token
           return result;
         } catch (error) {
@@ -66,18 +66,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     jwt({ token, user }) {
-      console.log('jwt callback, token and user:', token, user)
+      // console.log('jwt callback, token and user:', token, user)
       if (user) {
         token.id = user.id;
         token.name = user.name!;
         token.email = user.email;
         token.accessToken = user.accessToken; // Save authToken as accessToken
       }
-      console.log('jwt callback saving token: ', token)
+      // console.log('jwt callback saving token: ', token)
       return token;
     },
     session({ session, token } : {session: Session, token: JWT}) {
-      console.log('session callback, token:', token)
+      // console.log('session callback, token:', token)
       if (token && token.accessToken) {
         session.accessToken = token.accessToken; 
       }

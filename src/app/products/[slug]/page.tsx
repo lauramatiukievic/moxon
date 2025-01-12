@@ -10,7 +10,7 @@ interface Props {
 
 export default async function ProductDetail({ params }: Props) {
   const { slug } = params;
-  const { product } = await fetchGraphQL<{ product: VariableProduct }>(print(ProductQuery), { id: slug });
+  const { product } = await fetchGraphQL<{ product: VariableProduct }>(print(ProductQuery), { id: slug }, null, {}, ['wordpress']);
 
   const categories = product.productCategories?.edges.map(({ node }) =>
     node as { id: string; name: string; slug: string }

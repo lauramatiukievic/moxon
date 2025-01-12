@@ -130,14 +130,14 @@ export default function PaymentForm() {
       const paymentData = {
         projectid: "248064", // Replace with actual project ID
         orderid: "unique_order_id_" + Date.now(), // Unique order ID
-        accepturl: "https://yourdomain.com/payment-success",
-        cancelurl: "https://yourdomain.com/payment-cancel",
-        callbackurl: "https://yourdomain.com/api/paysera-callback",
+        accepturl: "https://bc9e-84-15-188-109.ngrok-free.app",
+        cancelurl: "https://bc9e-84-15-188-109.ngrok-free.app",
+        callbackurl: "https://bc9e-84-15-188-109.ngrok-free.app/api/paysera-callback",
         version: "1.6",
         amount: 1000, // Amount in cents (e.g., 1000 = 10.00 EUR)
         currency: "EUR",
       };
-      redirectToPaysera(paymentData, projectPassword);
+      // redirectToPaysera(paymentData, projectPassword);
     } catch (error) {
       console.error('GraphQL Error:', error);
       alert('Failed to create order. Please try again.');

@@ -5,6 +5,7 @@ export async function fetchGraphQL<T = any>(
   variables?: { [key: string]: any },
   session?: Session | null,
   headers?: { [key: string]: string },
+  tags?: string[],
 ): Promise<T> {
   try {
 
@@ -36,6 +37,7 @@ export async function fetchGraphQL<T = any>(
       method: "POST",
       headers: requestHeaders,
       body,
+      next: tags ? { tags } : undefined,
     });
 
 

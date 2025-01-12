@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function PUT(request: NextRequest) {
+  console.log('revalidating')
   const requestBody = await request.text();
   const { paths, tags } = requestBody
     ? JSON.parse(requestBody)

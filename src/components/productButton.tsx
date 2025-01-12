@@ -29,9 +29,13 @@ const [colorValidation, setColorValidation] = useState<string | null>(null);
 
   const validateSelections = () => {
     let isValid = true;
+
+    const hasSizeAttributes = product.attributes?.nodes?.some(
+      (attr: ProductAttribute) => attr.name === 'pa_size'
+    );
   
     // Validate size selection
-    if (!selectedSize) {
+    if (hasSizeAttributes &&!selectedSize) {
       setSizeValidation('Reikia pasirinkti dydį, kad galėtumėte pridėti į krepšelį.');
       isValid = false;
     } else {
