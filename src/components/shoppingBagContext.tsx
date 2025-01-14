@@ -8,7 +8,7 @@ export interface BagItem extends VariableProduct {
   quantity: number; 
   stockQuantity?: number; 
   variationId: number,
-  selectedSize: string;
+  selectedSize?: string | null;
   price: string;
   savedVariation?: number
   selectedColor?:string | null 
@@ -47,7 +47,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const removeFromBag = (id: string, selectedSize: string) => {
+  const removeFromBag = (id: string, selectedSize: string| null) => {
     setShoppingBag((prevItems) => {
       const updatedBag = prevItems.filter(
         (product) => !(product.id === id && product.selectedSize === selectedSize)
@@ -70,11 +70,11 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
       if (existingItemIndex !== -1) {
         const existingItem = prevItems[existingItemIndex];
   
-        // Check stock limit if stockQuantity is defined
-        if (product.stockQuantity !== undefined && existingItem.quantity + 1 > product.stockQuantity) {
-          toast.error('No more stock available for this product');
-          return prevItems;
-        }
+        // // Check stock limit if stockQuantity is defined
+        // if (product.stockQuantity !== undefined && existingItem.quantity + 1 > product.stockQuantity) {
+        //   toast.error('No more stock available for this product');
+        //   return prevItems;
+        // }
   
         // Update the quantity of the existing item
         const updatedBag = prevItems.map((item, index) =>
@@ -96,7 +96,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
   
   
   
-  const updateQuantity = (id: string, quantity: number, selectedSize: string) => {
+  const updateQuantity = (id: string, quantity: number, selectedSize: string | null) => {
     setShoppingBag((prevItems) => {
       const updatedBag = prevItems.map((item) =>
         item.id === id && item.selectedSize === selectedSize

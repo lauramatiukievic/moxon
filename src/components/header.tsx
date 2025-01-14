@@ -67,7 +67,7 @@ export default function Header() {
             {!mobileMenuOpen && (
               <div className="flex flex-1 items-center justify-end">
                 {/* Search */}
-                <div className="relative mr-5">
+                {/* <div className="relative mr-5">
                   <input
                     type="text"
                     placeholder="Paieška"
@@ -77,7 +77,7 @@ export default function Header() {
                     aria-hidden="true"
                     className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
                   />
-                </div>
+                </div> */}
                 <div>
                   {status === 'authenticated' ? (
                     <button

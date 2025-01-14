@@ -19,10 +19,14 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
   const [sizeValidation, setSizeValidation] = useState<string | null>(null);
 const [colorValidation, setColorValidation] = useState<string | null>(null);
 
-  const currentQuantityInBag =
-    shoppingBag.find(
-      (item) => item.id === product.id && item.selectedSize === selectedSize
-    )?.quantity || 0;
+const currentQuantityInBag = shoppingBag
+  .filter(
+    (item) =>
+      item.id === product.id &&
+      (selectedSize ? item.selectedSize === selectedSize : true) &&
+      (selectedColor ? item.selectedColor === selectedColor : true)
+  )
+  .reduce((total, item) => total + item.quantity, 0);
 
   const isAtStockLimit = stockQuantity !== null && currentQuantityInBag >= stockQuantity;
   const isOutOfStock = stockQuantity === 0;
@@ -57,58 +61,33 @@ const [colorValidation, setColorValidation] = useState<string | null>(null);
     return isValid;
   };
   
-  
+  console.log(stockQuantity)
 
   const handleAddToBag = () => {
-
+    const hasSizeAttributes = product.attributes?.nodes?.some(
+      (attr: ProductAttribute) => attr.name === 'pa_size'
+    );
+  
     if (!validateSelections()) {
       return;
     }
-    if (!selectedPrice) {
-      console.error("Price not selected");
-      return;
-    }
-
-    if (!selectedSize) {
-      console.error("Size not selected");
-      return;
-    }
-    
-    const colorAttributes = product.attributes?.nodes?.filter(
-        (attr: ProductAttribute) => attr.name === 'pa_color'
-      );
-
-    console.log('Has color attributes')
-
-    if (colorAttributes && colorAttributes.length > 0 && !selectedColor) {
-      console.error("Color not selected");
-      return;
-    }
-
-    if (stockQuantity !== null && stockQuantity <= 0) {
-      console.error("Item is out of stock");
-      return;
-    }
-
-    if (stockQuantity !== null && currentQuantityInBag >= stockQuantity) {
-      console.error("No more stock available for this product");
-      return;
-    }
-
+  
     const newItem: BagItem = {
       ...product,
-      selectedSize,
+      selectedSize: hasSizeAttributes ? selectedSize : null,
       selectedColor: selectedColor || null,
-      price: selectedPrice,
+      price: selectedPrice || product.price || "0",
       quantity: 1,
       savedVariation: savedVariation || 0,
       stockQuantity: stockQuantity || 0,
-      variationId: savedVariation || 0
+      variationId: savedVariation || 0,
     };
-
-    console.log("Adding to bag:", newItem); // Debugging
+  
     addToBag(newItem);
   };
+  
+
+  console.log(product)
 
   return (
     <div>

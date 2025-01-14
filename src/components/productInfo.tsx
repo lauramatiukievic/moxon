@@ -24,6 +24,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const handleSaveVariation = (variation: number | null) => setSavedVariations(variation);
   const handleSelectedColor = (color: string | null) => setSelectedColor(color);
 
+  console.log(stockQuantity)
   const toggleDescription = () => {
     setIsDescriptionVisible(!isDescriptionVisible);
   };

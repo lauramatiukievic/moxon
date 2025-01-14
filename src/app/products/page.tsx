@@ -9,7 +9,7 @@ import { Category } from '@/utils/common-types'
 
 export default async function Example() {
 
-  const productData = await fetchGraphQL<{ products: { edges: { node: VariableProduct }[] } }>(print(ProductsQuery), {categoryIds: []}, null, {}, ['wordpress']);
+  const productData = await fetchGraphQL<{ products: { edges: { node: VariableProduct }[] } }>(print(ProductsQuery), {categoryIds: []});
   const categoryData = await fetchGraphQL<{ productCategories: { edges: { node: { id: string, name: string, parentId: string | null, databaseId: number } }[] } }>(print(FilterQuerry));
 
   const productList = productData.products.edges.map(edge => edge.node);

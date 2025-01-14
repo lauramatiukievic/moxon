@@ -35,43 +35,54 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
   const handleSizeSelect = (size: string | null, color: string | null) => {
     setSelectedSize(size);
     setSelectedColor(color);
-    console.log("Selected Size:", size); // Debugging
-    onSizeSelect(size); 
-    onSelectedColor(color)
-    // Find the price and stock for the selected size
+  
+    console.log("Selected Size:", size, "Selected Color:", color); // Debugging
+    onSizeSelect(size);
+    onSelectedColor(color);
+  
+    // Find the price and stock for the selected size or color
     if (product.variations?.edges) {
       const selectedVariation = product.variations.edges.find((edge) => {
         const variation = edge.node as ProductVariation;
-
-        // Check if this variation matches the selected size
-        return variation.attributes?.nodes?.some((attr: Node) => {
-          // const castedAttr = attr as ProductAttribute;
-          return (attr as any).name === 'pa_size' && (attr as any).value === size;
-       
-        });
+  
+        // Check if this variation matches the selected size and/or color
+        const matchesSize = size
+          ? variation.attributes?.nodes?.some(
+              (attr: Node) => (attr as any).name === "pa_size" && (attr as any).value === size
+            )
+          : true; // If size is not required, consider it a match
+  
+        const matchesColor = color
+          ? variation.attributes?.nodes?.some(
+              (attr: Node) => (attr as any).name === "pa_color" && (attr as any).value === color
+            )
+          : true; // If color is not required, consider it a match
+  
+        return matchesSize && matchesColor;
       });
+
+
 
       if (selectedVariation) {
         const variationNode = selectedVariation.node as ProductVariation;
         const price = variationNode.price || null;
         const stockQuantity = variationNode.stockQuantity || null;
-        const variationId = variationNode.databaseId
+        const variationId = variationNode.databaseId;
+  
         console.log("Selected Price:", price, "Selected Stock:", stockQuantity); // Debugging
-
-        // Set price and stock for the selected size
-        // save variationId (variationNode.databaseId)
+  
         onPriceSelect(price);
         onStockSelect(stockQuantity);
-        onSaveVariation(variationId)
-        onSelectedColor(color)
+        onSaveVariation(variationId);
       } else {
         console.log("No matching variation found"); // Debugging
-        onPriceSelect(null);  // Clear the price if no variation is found
-        onStockSelect(null);  // Clear the stock if no variation is found
-        onSaveVariation(null)
+        onPriceSelect(null); // Clear the price if no variation is found
+        onStockSelect(null); // Clear the stock if no variation is found
+        onSaveVariation(null);
       }
     }
   };
+  
 
   
 
@@ -83,6 +94,12 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
     (attr: ProductAttribute) => attr.name === 'pa_color'
   );
 
+  const hasSizeAttributes = product.attributes?.nodes?.some(
+    (attr: ProductAttribute) => attr.name === 'pa_size'
+  );
+
+  console.log('Has', hasSizeAttributes)
+  console.log('Attr', sizeAttributes)
 
 
 
@@ -100,7 +117,7 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
               <button
                 key={optionValue}
                 type="button"
-                onClick={() => handleSizeSelect(optionValue, selectedColor)}
+                onClick={() => handleSizeSelect(optionValue, selectedSize)}
                 className={`px-4 py-2 rounded-md border ${
                   selectedSize === optionValue ? 'bg-purple-500 text-white' : 'bg-white text-gray-700'
                 } hover:bg-purple-400 hover:text-white transition`}
@@ -114,8 +131,6 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
         )}
       </div>
       </div>
-      <div>
-      <h3 className="text-lg font-semibold mb-2 mt-4">Pasirinkite spalvą:</h3>
       <div className="flex space-x-2">
   {colorAttributes && colorAttributes.length > 0 ? (
     colorAttributes.map((colorAttr: ProductAttribute) => {
@@ -125,15 +140,14 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
         <button
           key={colorSlug}
           type="button"
-          onClick={() => handleSizeSelect(selectedSize, colorSlug)}
+          onClick={() => handleSizeSelect(selectedSize, colorSlug)} // Pass the selected color
           className={`w-8 h-8 rounded-full border-2 ${
             selectedColor === colorSlug
-              ? 'ring-2 ring-purple-500 border-purple-500'
-              : 'border-gray-300'
+              ? "ring-2 ring-purple-500 border-purple-500"
+              : "border-gray-300"
           }`}
-          // Use Tailwind's `bg-[colorSlug]` class to dynamically apply background colors
           style={{
-            backgroundColor: colorSlug ? getColorFromSlug(colorSlug) : '#cccccc', // Helper function to resolve the slug to a color
+            backgroundColor: colorSlug ? getColorFromSlug(colorSlug) : '#cccccc',
           }}
         >
           <span className="sr-only">{colorSlug}</span>
@@ -144,13 +158,16 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
     <p>Šis produktas neturi spalvos</p>
   )}
 </div>
-</div>
       {/* Display selected price */}
     
     </div>
-      <p className="mt-5 text-xl font-medium text-gray-900">
-      {selectedPrice ? `${selectedPrice} €` : 'Pasirinkite dydį, kad matytumėte kainą'}
-    </p>
+    <p className="mt-5 text-xl font-medium text-gray-900">
+  {hasSizeAttributes
+    ? selectedPrice 
+      ? `${selectedPrice} €` 
+      : 'Pasirinkite dydį, kad matytumėte kainą'
+    : `${product.price} €`}
+</p>
     </div>
 
   );
