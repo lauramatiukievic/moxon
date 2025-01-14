@@ -9,16 +9,16 @@ export default function ShoppingBag() {
 
   const handleDecreaseQuantity = (product: BagItem) => {
     if (product.quantity > 1) {
-      updateQuantity(product.id, product.quantity - 1, product.selectedSize);
+      updateQuantity(product.id, product.quantity - 1, product.selectedSize || null, product.selectedColor || null);
     } else {
-      removeFromBag(product.id, product.selectedSize);
+      removeFromBag(product.id, product.selectedSize || null, product.selectedColor || null);
     }
   };
 
   const handleIncreaseQuantity = (product: BagItem) => {
     const stockLimit = product.stockQuantity ?? 0;
     if (product.quantity < stockLimit) {
-      updateQuantity(product.id, product.quantity + 1, product.selectedSize);
+      updateQuantity(product.id, product.quantity + 1, product.selectedSize ||  null, product.selectedColor || null);
     } else {
       toast.error(`No more stock available for ${product.name} (${product.selectedSize})`);
     }
@@ -40,7 +40,7 @@ export default function ShoppingBag() {
             ) : (
               <div className="grid grid-cols-1 gap-6">
                 {shoppingBag.map((product) => (
-                  <div key={'' + product.savedVariation + product.selectedColor} className="flex items-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                  <div key={`${product.id}-${product.savedVariation || 'no-variation'}-${product.selectedColor || 'no-color'}`} className="flex items-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                     <div className="w-24 h-24 flex-shrink-0">
                       <img
                         alt={product.image?.altText || 'Product Image'}
@@ -87,7 +87,7 @@ export default function ShoppingBag() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => removeFromBag(product.id, product.selectedSize)}
+                          onClick={() => removeFromBag(product.id, product.selectedSize || null, product.selectedColor || null)}
                           className="text-sm font-medium text-red-600 hover:text-red-500"
                         >
                           Ištrinti

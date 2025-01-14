@@ -117,7 +117,7 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
               <button
                 key={optionValue}
                 type="button"
-                onClick={() => handleSizeSelect(optionValue, selectedSize)}
+                onClick={() => handleSizeSelect(optionValue, selectedColor)}
                 className={`px-4 py-2 rounded-md border ${
                   selectedSize === optionValue ? 'bg-purple-500 text-white' : 'bg-white text-gray-700'
                 } hover:bg-purple-400 hover:text-white transition`}

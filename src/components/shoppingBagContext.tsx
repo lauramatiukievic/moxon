@@ -17,8 +17,8 @@ export interface BagItem extends VariableProduct {
 interface ShoppingBagContextProps {
   shoppingBag: BagItem[];
   addToBag: (product: BagItem) => void; 
-  removeFromBag: (id: string, selectedSize: string) => void; 
-  updateQuantity: (id: string, quantity: number, selectedSize: string) => void;
+  removeFromBag: (id: string, selectedSize: string | null, selectedColor: string | null) => void; 
+  updateQuantity: (id: string, quantity: number, selectedSize: string | null, selectedColor: string | null) => void;
   clearBag: () => void;
 }
 
