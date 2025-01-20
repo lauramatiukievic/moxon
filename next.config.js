@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
+        port: "",
+      },
     ],
   },
 };

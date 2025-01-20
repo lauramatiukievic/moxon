@@ -71,21 +71,26 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </form>
 
       {/* Toggleable Description */}
-      <div className="mt-6 border border-gray-300 rounded-lg p-4">
-  <button
-    onClick={toggleDescription}
-    className="text-lg font-semibold text-gray-900 hover:text-gray-700 w-full text-left"
-  >
-    {isDescriptionVisible ? 'Slėpti produkto aprašymą' : 'Peržiūrėti produkto aprašymą'}
-  </button>
+      {product.description && (
+  <div className="mt-6 border border-gray-300 rounded-lg p-4">
+    <button
+      onClick={toggleDescription}
+      className="text-lg font-semibold text-gray-900 hover:text-gray-700 w-full text-left"
+    >
+      {isDescriptionVisible
+        ? 'Slėpti produkto aprašymą'
+        : 'Peržiūrėti produkto aprašymą'}
+    </button>
 
-  {isDescriptionVisible && (
-    <div
-      className="mt-4 border-t border-gray-200 pt-4 text-gray-700"
-      dangerouslySetInnerHTML={{ __html: product.description || '' }}
-    />
-  )}
-</div>
+    {isDescriptionVisible && (
+      <div
+        className="mt-4 border-t border-gray-200 pt-4 text-gray-700"
+        dangerouslySetInnerHTML={{ __html: product.description }}
+      />
+    )}
+  </div>
+)}
+
 
     </div>
   );

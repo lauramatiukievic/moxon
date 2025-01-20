@@ -19,6 +19,17 @@ export const ProductButtons = ({ product, selectedPrice, stockQuantity, selected
   const [sizeValidation, setSizeValidation] = useState<string | null>(null);
 const [colorValidation, setColorValidation] = useState<string | null>(null);
 
+const sizeOptions =
+product.attributes?.nodes
+  ?.find((attr: ProductAttribute) => attr.name === "pa_size")
+  ?.options ?? [];
+const colorOptions =
+product.attributes?.nodes
+  ?.find((attr: ProductAttribute) => attr.name === "pa_color")
+  ?.options ?? [];
+
+
+
 const currentQuantityInBag = shoppingBag
   .filter(
     (item) =>
@@ -39,7 +50,7 @@ const currentQuantityInBag = shoppingBag
     );
   
     // Validate size selection
-    if (hasSizeAttributes &&!selectedSize) {
+    if (sizeOptions.length > 1 &&!selectedSize) {
       setSizeValidation('Reikia pasirinkti dydį, kad galėtumėte pridėti į krepšelį.');
       isValid = false;
     } else {
@@ -51,7 +62,7 @@ const currentQuantityInBag = shoppingBag
       (attr: ProductAttribute) => attr.name === 'pa_color'
     );
   
-    if (hasColorAttributes && !selectedColor) {
+    if (colorOptions.length > 1 && !selectedColor) {
       setColorValidation('Reikia pasirinkti spalvą, kad galėtumėte pridėti į krepšelį.');
       isValid = false;
     } else {
@@ -74,8 +85,12 @@ const currentQuantityInBag = shoppingBag
   
     const newItem: BagItem = {
       ...product,
-      selectedSize: hasSizeAttributes ? selectedSize : null,
-      selectedColor: selectedColor || null,
+      // selectedSize: hasSizeAttributes ? selectedSize : null,
+      // selectedColor: selectedColor || null,
+
+      selectedSize: sizeOptions.length === 1 ? sizeOptions[0] : selectedSize,
+      selectedColor: colorOptions.length === 1 ? colorOptions[0] : selectedColor,
+
       price: selectedPrice || product.price || "0",
       quantity: 1,
       savedVariation: savedVariation || 0,
@@ -87,7 +102,7 @@ const currentQuantityInBag = shoppingBag
   };
   
 
-  console.log(product)
+  console.log(sizeValidation)
 
   return (
     <div>

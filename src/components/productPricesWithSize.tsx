@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProductAttribute, ProductVariation, VariableProduct, Node } from '@/gql/graphql';
 
 interface Props {
@@ -30,6 +30,8 @@ export const getColorFromSlug = (slug: string) => {
 export default function SizePriceSelector({ product, onPriceSelect, onStockSelect, selectedPrice, onSizeSelect, onSaveVariation, onSelectedColor}: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+  
 
 
   const handleSizeSelect = (size: string | null, color: string | null) => {
@@ -98,8 +100,78 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
     (attr: ProductAttribute) => attr.name === 'pa_size'
   );
 
-  console.log('Has', hasSizeAttributes)
-  console.log('Attr', sizeAttributes)
+  const sizeOptions = sizeAttributes?.[0]?.options || [];
+  const colorOptions = colorAttributes?.[0]?.options || [];
+
+
+  useEffect(() => {
+    let autoSelectedSize = selectedSize;
+    let autoSelectedColor = selectedColor;
+
+    // Auto-select size if there's only one option
+    if (sizeOptions.length === 1) {
+      autoSelectedSize = sizeOptions[0];
+      setSelectedSize(autoSelectedSize);
+      onSizeSelect(autoSelectedSize); // Notify parent about auto-selected size
+    }
+
+    // Auto-select color if there's only one option
+    if (colorOptions.length === 1) {
+      autoSelectedColor = colorOptions[0];
+      setSelectedColor(autoSelectedColor);
+      onSelectedColor(autoSelectedColor); // Notify parent about auto-selected color
+    }
+
+    // Fetch stock and price based on the auto-selected size and/or color
+    if (product.variations?.edges) {
+      const selectedVariation = product.variations.edges.find((edge) => {
+        const variation = edge.node as ProductVariation;
+
+        // Check if variation matches the auto-selected size
+        const matchesSize = autoSelectedSize
+          ? variation.attributes?.nodes?.some(
+              (attr: Node) =>
+                (attr as any).name === "pa_size" &&
+                (attr as any).value === autoSelectedSize
+            )
+          : true; // If size is not required, consider it a match
+
+        // Check if variation matches the auto-selected color
+        const matchesColor = autoSelectedColor
+          ? variation.attributes?.nodes?.some(
+              (attr: Node) =>
+                (attr as any).name === "pa_color" &&
+                (attr as any).value === autoSelectedColor
+            )
+          : true; // If color is not required, consider it a match
+
+        return matchesSize && matchesColor;
+      });
+
+      if (selectedVariation) {
+        const variationNode = selectedVariation.node as ProductVariation;
+        const price = variationNode.price || null;
+        const stockQuantity = variationNode.stockQuantity || null;
+        const variationId = variationNode.databaseId;
+
+        // Update price, stock, and variation
+        onPriceSelect(price); // Notify parent about the price
+        onStockSelect(stockQuantity); // Notify parent about the stock quantity
+        onSaveVariation(variationId); // Notify parent about the variation ID
+      }
+    }
+  }, [
+    sizeOptions, // Runs when size options change
+    colorOptions, // Runs when color options change
+    selectedSize, // Runs when the selected size changes
+    selectedColor, // Runs when the selected color changes
+    onPriceSelect, // Ensures callback is up-to-date
+    onStockSelect, // Ensures callback is up-to-date
+    onSaveVariation, // Ensures callback is up-to-date
+    onSizeSelect, // Ensures callback is up-to-date
+    onSelectedColor, // Ensures callback is up-to-date
+    product.variations?.edges, // Runs when product variations change
+  ]);
 
 
 
