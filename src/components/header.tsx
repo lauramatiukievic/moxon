@@ -126,8 +126,8 @@ export default function Header() {
                           shoppingBag.map((product) => (
                             <li key={'' + product.savedVariation + product.selectedColor} className="flex items-center py-6">
                               <Image
-                                alt={product.image?.altText!}
-                                src={product.image?.sourceUrl!}
+                                alt={product.image?.altText || ""}
+                                src={product.image?.sourceUrl || ""}
                                 className="h-16 w-16 flex-none rounded-md border border-gray-200"
                                 width={38}
                                 height={38}
