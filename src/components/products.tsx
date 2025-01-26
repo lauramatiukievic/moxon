@@ -1,14 +1,14 @@
 "use client"
-
-import { VariableProduct } from "@/gql/graphql"
+import { fetchGraphQL } from '@/utils/fetchGraphQL'
+import { print } from 'graphql'
+import { PageInfo, VariableProduct } from "@/gql/graphql"
 import { Category } from "@/utils/common-types"
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { PlusIcon, MinusIcon, XMarkIcon } from "@heroicons/react/24/outline"
 import FilterButtons from "./filter-buttons"
-import MobileDialog from "./productsdialog"
 import ProductList from "./productsList"
-import ProductsSort from "./productsSort"
-import { SyntheticEvent, useEffect, useState } from "react"
+import { SyntheticEvent, useCallback, useEffect, useState } from "react"
+import { ProductsQuery } from '@/queries/products/ProductsQuery'
 
 
 export const extractLowestPrice = (price: string | null | undefined): number => {
@@ -18,51 +18,99 @@ export const extractLowestPrice = (price: string | null | undefined): number => 
 };
 
 interface Props {
-  products: VariableProduct[],
   categories: Category[],
 }
 
-function Products({ products, categories }: Props) {
-  const [sortOrder, setSortOrder] = useState<string>('asc');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<VariableProduct[]>(products);
+function Products({categories }: Props) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [products, setProducts] = useState<VariableProduct[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const updateSelectedCategories = (updatedCategories: string[]) => {
-    setSelectedCategories(updatedCategories);
-    if (updatedCategories.length === 0) {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter((product) =>
-        product.productCategories?.edges?.some((category) =>
-          updatedCategories.includes(category.node.id)
-        )
-      );
-      setFilteredProducts(filtered);
+  useEffect(() => {
+    // Fetch all products on initial mount
+    console.log('fetching:', selectedCategories)
+    fetchProducts();
+    
+  }, [selectedCategories]);
+  
+
+  const fetchProducts = useCallback(
+    async (after?: string) => {
+      setLoading(true);
+
+      try {
+        const variables = {
+          categoryIds: selectedCategories.length ? selectedCategories : undefined, // Fetch all if no categories
+          first: 5,
+          after,
+        };
+
+        const productData = await fetchGraphQL<{
+          products: { edges: { node: VariableProduct }[]; pageInfo: PageInfo };
+        }>(print(ProductsQuery), variables);
+
+        if (!after) {
+          // Overwrite products if it's a new filter
+          setProducts(productData.products.edges.map((edge) => edge.node));
+        } else {
+          // Append products for pagination
+          setProducts((prev) => [...prev, ...productData.products.edges.map((edge) => edge.node)]);
+        }
+
+        setPageInfo(productData.products.pageInfo);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedCategories]
+  );
+
+  const loadMoreProducts = useCallback(() => {
+    if (pageInfo?.hasNextPage && pageInfo.endCursor) {
+      fetchProducts(pageInfo.endCursor);
     }
+  }, [pageInfo, fetchProducts]);
+
+  const handleParentCategory = (categoryId: number, isOpen: boolean) => {
+    setSelectedCategories((prev) => {
+      const updatedCategories = isOpen
+        ? [...prev, categoryId] // Add category if expanded
+        : prev.filter((id) => id !== categoryId); // Remove category if collapsed
+      return updatedCategories;
+    });
   };
 
-  const handleParentCategory = (categoryId: string, isOpen: boolean) => {
-    const updatedCategories = isOpen
-      ? [...selectedCategories, categoryId]
-      : selectedCategories.filter((id) => id !== categoryId);
-    updateSelectedCategories(updatedCategories);
-  };
-
-  const handleChildCategory = (event: SyntheticEvent<HTMLInputElement>, parentId: string) => {
-    const categoryId = event.currentTarget.value;
+  const handleChildCategory = (event: SyntheticEvent<HTMLInputElement>, parentCategoryId: number) => {
+    const categoryId = Number(event.currentTarget.value);
     const isChecked = event.currentTarget.checked;
-
-    const updatedCategories = isChecked
-      ? [...selectedCategories.filter((id) => id !== parentId), categoryId]
-      : selectedCategories.filter((id) => id !== categoryId);
-
-    if (updatedCategories.length === 0) {
-      updatedCategories.push(parentId);
-    }
-
-    updateSelectedCategories(updatedCategories);
+  
+    setSelectedCategories((prev) => {
+      // Remove the parent category and the specific child category being toggled
+      const updatedCategories = prev.filter((id) => id !== parentCategoryId && id !== categoryId);
+  
+      if (isChecked) {
+        // Add only the selected child category
+        return [...updatedCategories, categoryId];
+      } else {
+        // If no child categories are selected, re-add the parent category ID
+        const parentHasSelectedChildren = categories
+          .find((category) => category.id === parentCategoryId)
+          ?.options.some((option) => updatedCategories.includes(option.value));
+  
+        if (!parentHasSelectedChildren) {
+          return [...updatedCategories, parentCategoryId];
+        }
+  
+        return updatedCategories;
+      }
+    });
   };
+  
+  
 
   return (
     <div className="bg-white">
@@ -185,8 +233,17 @@ function Products({ products, categories }: Props) {
               </form>
 
               {/* Product Grid */}
-              <div className="sm:col-span-3 md:col-span-3">
-                <ProductList products={filteredProducts} />
+              <div className=" flex flex-col items-center sm:col-span-3 md:col-span-3">
+                <ProductList  products={products} />
+                {pageInfo?.hasNextPage && (
+        <button
+          onClick={loadMoreProducts}
+          disabled={loading}
+          className="mt-4 rounded-md bg-purple-600 px-4 py-2 text-white disabled:opacity-50"
+        >
+          {loading ? "Loading..." : "Daugiau prekių"}
+        </button>
+      )}
               </div>
             </div>
           </section>

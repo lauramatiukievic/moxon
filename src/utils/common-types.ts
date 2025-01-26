@@ -19,14 +19,14 @@ export enum ProductAttributes {
 
 
 export interface CategoryOption {
-  value: string;
+  value: number;
   label: string;
   slug: string;
   checked: boolean;
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   options: CategoryOption[];
 }

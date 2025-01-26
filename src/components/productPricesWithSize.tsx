@@ -38,7 +38,7 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
     setSelectedSize(size);
     setSelectedColor(color);
   
-    console.log("Selected Size:", size, "Selected Color:", color); // Debugging
+    // console.log("Selected Size:", size, "Selected Color:", color); // Debugging
     onSizeSelect(size);
     onSelectedColor(color);
   
@@ -71,13 +71,13 @@ export default function SizePriceSelector({ product, onPriceSelect, onStockSelec
         const stockQuantity = variationNode.stockQuantity || null;
         const variationId = variationNode.databaseId;
   
-        console.log("Selected Price:", price, "Selected Stock:", stockQuantity); // Debugging
+        // console.log("Selected Price:", price, "Selected Stock:", stockQuantity); // Debugging
   
         onPriceSelect(price);
         onStockSelect(stockQuantity);
         onSaveVariation(variationId);
       } else {
-        console.log("No matching variation found"); // Debugging
+        // console.log("No matching variation found"); // Debugging
         onPriceSelect(null); // Clear the price if no variation is found
         onStockSelect(null); // Clear the stock if no variation is found
         onSaveVariation(null);

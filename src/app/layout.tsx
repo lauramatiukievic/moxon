@@ -28,7 +28,7 @@ export default function RootLayout({
         {/* <div className="absolute middle-[-150px] left-[-200px] w-[500px] h-[500px] bg-purple-500 blur-[200px] opacity-60 rounded-full"></div>
         <div className="absolute middle-[100px] left-[200px] w-[700px] h-[700px] bg-indigo-500 blur-[250px] opacity-40 rounded-full"></div> */}
         <div className="absolute bottom-[-200px] right-[-250px] w-[600px] h-[600px] bg-purple-400 blur-[200px] opacity-50 rounded-full"></div>
-        <div className="absolute bottom-[-200px] right-[-250px] w-[600px] h-[600px] bg-purple-400 blur-[200px] opacity-50 rounded-full"></div>
+        <div className="absolute bottom-[-200px] left-[-250px] w-[600px] h-[600px] bg-purple-400 blur-[200px] opacity-50 rounded-full"></div>
         <SessionProvider>
           <ShoppingBagProvider>
             <MobileProvider>

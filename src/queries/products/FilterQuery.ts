@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 export const FilterQuerry = gql`
 query FilterQuery {
-    productCategories {
+    productCategories(first: 100) {
       edges {
         node {
           id
