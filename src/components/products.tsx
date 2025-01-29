@@ -30,7 +30,7 @@ function Products({categories }: Props) {
 
   useEffect(() => {
     // Fetch all products on initial mount
-    console.log('fetching:', selectedCategories)
+    // console.log('fetching:', selectedCategories)
     fetchProducts();
     
   }, [selectedCategories]);
@@ -39,26 +39,28 @@ function Products({categories }: Props) {
   const fetchProducts = useCallback(
     async (after?: string) => {
       setLoading(true);
-
+  
       try {
         const variables = {
-          categoryIds: selectedCategories.length ? selectedCategories : undefined, // Fetch all if no categories
-          first: 5,
-          after,
+          categoryIds: selectedCategories.length ? selectedCategories : undefined, // Apply category filter
+          first: 5, // Number of products to fetch
+          after,    // Cursor for pagination
         };
-
+  
         const productData = await fetchGraphQL<{
           products: { edges: { node: VariableProduct }[]; pageInfo: PageInfo };
         }>(print(ProductsQuery), variables);
-
-        if (!after) {
-          // Overwrite products if it's a new filter
-          setProducts(productData.products.edges.map((edge) => edge.node));
-        } else {
-          // Append products for pagination
-          setProducts((prev) => [...prev, ...productData.products.edges.map((edge) => edge.node)]);
-        }
-
+  
+        const newProducts = productData.products.edges.map((edge) => edge.node);
+        // console.log('newProducts', newProducts)
+        // console.log('current products: ', products)
+  
+        setProducts((prev) => {
+          // Append if paginating (after exists), otherwise overwrite
+          return after ? [...prev, ...newProducts] : newProducts;
+        });
+  
+        // Update pageInfo for pagination
         setPageInfo(productData.products.pageInfo);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -68,7 +70,9 @@ function Products({categories }: Props) {
     },
     [selectedCategories]
   );
-
+  
+  
+  
   const loadMoreProducts = useCallback(() => {
     if (pageInfo?.hasNextPage && pageInfo.endCursor) {
       fetchProducts(pageInfo.endCursor);

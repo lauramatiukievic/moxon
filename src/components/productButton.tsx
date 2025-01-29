@@ -72,7 +72,7 @@ const currentQuantityInBag = shoppingBag
     return isValid;
   };
   
-  console.log(stockQuantity)
+  // console.log(stockQuantity)
 
   const handleAddToBag = () => {
     const hasSizeAttributes = product.attributes?.nodes?.some(
@@ -102,7 +102,7 @@ const currentQuantityInBag = shoppingBag
   };
   
 
-  console.log(sizeValidation)
+  // console.log(sizeValidation)
 
   return (
     <div>

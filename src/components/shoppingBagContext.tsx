@@ -41,7 +41,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
       const parsedBag = JSON.parse(storedBag) as BagItem[];
       // Log to verify stockQuantity is present
       parsedBag.forEach(item => {
-        console.log(`Retrieved item ${item.name} with stockQuantity: ${item.stockQuantity}`);
+        // console.log(`Retrieved item ${item.name} with stockQuantity: ${item.stockQuantity}`);
       });
       setShoppingBag(parsedBag);
     }

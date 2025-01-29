@@ -4,6 +4,7 @@ import { VariableProduct } from '@/gql/graphql';
 import { print } from 'graphql';
 import ProductInfo from '@/components/productInfo';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+import ReviewsComponent from '@/components/reviews';
 
 interface Props {
   params: { slug: string };
@@ -21,7 +22,7 @@ export default async function ProductDetail({ params }: Props) {
     node as  { id: string; altText: string, sourceUrl: string}
 )
 
-  console.log(product.galleryImages?.edges)
+  // console.log(product.galleryImages?.edges)
 
   return (
     <div className="bg-white">
@@ -101,6 +102,11 @@ export default async function ProductDetail({ params }: Props) {
             <ProductInfo product={product} />
           </div>
         </div>
+        <div className="mt-12">
+          <ReviewsComponent product={product} /> {/* Pass product.id as productId */}
+        </div>
+  
+  
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import Link from "next/link"
 
 async function UserButton() {
     const session = await auth()
-    console.log('rendered UserButton', session)
+    // console.log('rendered UserButton', session)
   return     session?.accessToken ?
     (<>
       <button onClick={() => signOut({redirectTo: '/products'})} className="-m-2 p-2 text-gray-400 hover:text-gray-500">

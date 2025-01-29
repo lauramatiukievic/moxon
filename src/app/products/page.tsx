@@ -24,7 +24,7 @@ export default async function Example() {
       })),
   })) as Category[];
 
-  console.log('main categories:', mainCategories)
+  // console.log('main categories:', mainCategories)
 
 
   return (

@@ -21,7 +21,7 @@ export default function ProductList({ products }: Props) {
     return <div>No products available</div>;
   }
 
-  console.log(products)
+  // console.log(products)
 
   const { sortOrder } = useMobileContext()
 
@@ -41,7 +41,7 @@ export default function ProductList({ products }: Props) {
 
         <div className="-mx-px grid grid-cols-2 sm:grid-cols-3 border-l border-gray-200 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
           {sortedProducts.map((product) => (
-            <div key={`${product.id}-${product.productCategories}`} className="group relative border-b border-r border-gray-200 p-4 sm:p-6">
+            <div key={`${product.id}`} className="group relative border-b border-r border-gray-200 p-4 sm:p-6">
               <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-200 group-hover:opacity-75">
                 <img
                   alt={product.image!.altText!}
