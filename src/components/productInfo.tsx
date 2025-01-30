@@ -103,5 +103,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )
     }
     </>
+
+
   );
 }

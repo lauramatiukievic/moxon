@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { useShoppingBag } from './shoppingBagContext';
 import { print } from 'graphql';
@@ -26,16 +26,17 @@ interface PaymentData {
 }
 
 const deliveryMethods = [
-  { id: 1, title: 'Standard', turnaround: '4–10 business days', price: 5.00 },
-  { id: 2, title: 'Express', turnaround: '2–5 business days', price: 16.00 },
+  { id: 1, title: 'Paštomatu', turnaround: '2–5 darbo dienos', price: 5.00 },
+  { id: 2, title: 'Į namus', turnaround: '2–5 darbo dienos', price: 16.00 },
 ];
 
 
 export default function PaymentForm() {
   const { data: session } = useSession()
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
+  // const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
   const { shoppingBag, removeFromBag, clearBag } = useShoppingBag();
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0]);
 
 
   i18nIsoCountries.registerLocale(require('i18n-iso-countries/langs/lt.json'));
@@ -67,14 +68,22 @@ export default function PaymentForm() {
     phone: '',
   });
 
+  useEffect(() => {
+    const totalPrice = calculateTotalPrice();
+    console.log(`Total Price: €${totalPrice}`);
+  }, [selectedDeliveryMethod, shoppingBag]);
+
   const calculateTotalPrice = () => {
     const productTotal = shoppingBag.reduce(
       (total, product) => total + (parseFloat(product.price ?? '0') * product.quantity),
       0
     );
-    const deliveryFee = 5; // Always set to 5€
+
+    const deliveryFee = selectedDeliveryMethod?.price || 0;
+
     return productTotal + deliveryFee;
   };
+
 
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBillingDetails({
@@ -183,6 +192,7 @@ export default function PaymentForm() {
 
               <div className="mt-10 border-t border-gray-200 pt-10">
                 <h2 className="text-lg font-medium text-gray-900">Pristatymo informacija</h2>
+                <span>(Pristatysime į artimiausia paštomatą nurodytu adresu)</span>
 
                 <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                   <div>
@@ -344,7 +354,7 @@ export default function PaymentForm() {
                             <span className="mt-1 flex items-center text-sm text-gray-500">
                               {deliveryMethod.turnaround}
                             </span>
-                            <span className="mt-6 text-sm font-medium text-gray-900">{deliveryMethod.price} </span>
+                            <span className="mt-6 text-sm font-medium text-gray-900">{deliveryMethod.price} €</span>
                           </span>
                         </span>
                         <CheckCircleIcon
@@ -373,7 +383,7 @@ export default function PaymentForm() {
                 <h3 className="sr-only">Produktai krepšelyje</h3>
                 <ul role="list" className="divide-y divide-gray-200">
                   {shoppingBag.map((product, index) => (
-                    <li key={''+product.savedVariation+product.selectedColor} className="flex px-4 py-6 sm:px-6">
+                    <li key={'' + product.savedVariation + product.selectedColor} className="flex px-4 py-6 sm:px-6">
                       <div className="flex-shrink-0">
                         <img alt={product.image?.altText!} src={product.image?.sourceUrl!} className="w-20 rounded-md" />
                       </div>
@@ -391,7 +401,7 @@ export default function PaymentForm() {
 
                           <div className="ml-4 flow-root flex-shrink-0">
                             <button
-                              onClick={() => removeFromBag(product.id, product.selectedSize)}
+                              onClick={() => removeFromBag(product.id, product.selectedSize || null, product.selectedColor || null)}
                               type="button"
                               className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-gray-400 hover:text-gray-500"
                             >
@@ -412,14 +422,16 @@ export default function PaymentForm() {
                 <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                   <div className="flex items-center justify-between">
                     <dt className="text-sm  text-gray-900">Produktai</dt>
-                    <dd className="text-sm font-medium text-gray-900">                      {shoppingBag
-                      .reduce((total, product) => total + parseFloat(product.price!.replace('$', '')), 0)
+                    <dd className="text-sm font-medium text-gray-900">                     {shoppingBag
+                      .reduce((total, product) => total + parseFloat(product.price ?? '0') * product.quantity, 0)
                       .toFixed(2)}{' '}
                       € </dd>
                   </div>
                   <div className="flex items-center justify-between">
                     <dt className="text-sm  text-gray-900">Pristatymo mokestis</dt>
-                    <dd className="text-sm font-medium text-gray-900">5.00  € </dd>
+                    <dd className="text-sm font-medium text-gray-900">
+                      {selectedDeliveryMethod.price.toFixed(2)} €
+                    </dd>
                   </div>
                   <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                     <dt className="text-base font-medium  text-gray-900">Viso</dt>
