@@ -57,7 +57,6 @@ export async function GET(request: Request) {
     {
       id,
     },
-    { Authorization: `Bearer ${authToken}` },
   );
 
   if (!contentNode) {

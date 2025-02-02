@@ -11,7 +11,7 @@ import { useSession } from 'next-auth/react';
 import Select, { SingleValue } from 'react-select';
 import countries from 'world-countries';
 import i18nIsoCountries from 'i18n-iso-countries';
-import { redirectToPaysera } from '@/utils/checkout-utils';
+
 
 
 interface PaymentData {
@@ -34,7 +34,6 @@ const deliveryMethods = [
 export default function PaymentForm() {
   const { data: session } = useSession()
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
   const { shoppingBag, removeFromBag, clearBag } = useShoppingBag();
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0]);
 
