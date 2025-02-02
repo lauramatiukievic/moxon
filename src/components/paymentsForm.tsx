@@ -26,8 +26,8 @@ interface PaymentData {
 }
 
 const deliveryMethods = [
-  { id: 1, title: 'Paštomatu', turnaround: '2–5 darbo dienos', price: 5.00 },
-  { id: 2, title: 'Į namus', turnaround: '2–5 darbo dienos', price: 16.00 },
+  { id: 1, title: 'Paštomatu', turnaround: '2–5 darbo dienos', price: 3.99 },
+  { id: 2, title: 'Į namus', turnaround: '2–5 darbo dienos', price: 4.50 },
 ];
 
 
@@ -99,7 +99,7 @@ export default function PaymentForm() {
     const lineItems = shoppingBag.map((item) => ({
       productId: item.databaseId, // Decode base64 and extract the integer
       quantity: item.quantity,
-      variationId: item.variationId
+      variationId: item.variationId || null
     }));
 
     const orderData = {
@@ -129,6 +129,9 @@ export default function PaymentForm() {
 
 
     console.log("Order Data Sent to GraphQL:", orderData); // Log the order data before sending
+    console.log('Shopping Bag:', shoppingBag);
+
+    console.log(lineItems)
 
     try {
       const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData }, session);
