@@ -19,7 +19,6 @@ import { Logo } from './logo';
 const navigation = [
   { name: 'Produktai', href: '/' },
   { name: 'Kontaktai', href: '/contacts' },
-  { name: 'Apie Mus', href: '#' }
 ];
 
 export default function Header() {
