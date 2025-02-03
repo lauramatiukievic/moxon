@@ -17,7 +17,7 @@ import { getColorFromSlug } from './productPricesWithSize';
 import { Logo } from './logo';
 
 const navigation = [
-  { name: 'Produktai', href: '/products' },
+  { name: 'Produktai', href: '/' },
   { name: 'Kontaktai', href: '/contacts' },
   { name: 'Apie Mus', href: '#' }
 ];

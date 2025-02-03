@@ -16,7 +16,7 @@ export default function LoginForm() {
 
     try {
       await signIn("credentials", {
-        redirectTo: '/products',
+        redirectTo: '/',
         username: formData.get('username'),
         password: formData.get('password')
       });
@@ -95,7 +95,7 @@ export default function LoginForm() {
           ) : (
             <div>
               <p>Welcome, {session?.user?.name}</p>
-              <Link href="/products" className="text-sm font-semibold text-purple-600 hover:text-purple-500">
+              <Link href="/" className="text-sm font-semibold text-purple-600 hover:text-purple-500">
 
                   Go to Products
               </Link>

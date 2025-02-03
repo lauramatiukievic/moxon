@@ -132,7 +132,7 @@ export default function ShoppingBag() {
 
               <div className="mt-6 text-center text-sm">
                 <p>
-                  <a href="/products" className="font-medium text-purple-500 hover:text-purple-400">
+                  <a href="/" className="font-medium text-purple-500 hover:text-purple-400">
                     Testi apsipirkimą
                     <span aria-hidden="true"> &rarr;</span>
                   </a>

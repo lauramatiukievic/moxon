@@ -11,6 +11,7 @@ import Header from "@/components/header";
 import { MobileProvider } from "@/components/mobileContext";
 import { SessionProvider } from "next-auth/react";
 import Footer from "@/components/footer";
+import Products from "@/components/products";
 
 const inter = Montserrat({ subsets: ["latin"] });
 

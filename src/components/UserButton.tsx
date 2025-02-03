@@ -7,7 +7,7 @@ async function UserButton() {
     // console.log('rendered UserButton', session)
   return     session?.accessToken ?
     (<>
-      <button onClick={() => signOut({redirectTo: '/products'})} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
+      <button onClick={() => signOut({redirectTo: '/'})} className="-m-2 p-2 text-gray-400 hover:text-gray-500">
         <span className="sr-only">Account</span>
         <span>Sign out</span>
         <UserIcon aria-hidden="true" className="size-6" />

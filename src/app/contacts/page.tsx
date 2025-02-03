@@ -14,13 +14,16 @@ export default function Example() {
             </p>
             <dl className="mt-10 space-y-4 text-base/7 text-gray-600">
               <div className="flex gap-x-4">
+              <dt className="flex-none">
+                  <span className="sr-only">Arneta Vaitkevičiūtė</span>
+                </dt>
                 <dt className="flex-none">
                   <span className="sr-only">Telefonas</span>
                   <PhoneIcon aria-hidden="true" className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                  <a href="tel:+1 (555) 234-5678" className="hover:text-gray-900">
-                    +1 (555) 234-5678
+                  <a href="tel:+37060729214" className="hover:text-gray-900">
+                  +37060729214
                   </a>
                 </dd>
               </div>
@@ -34,6 +37,9 @@ export default function Example() {
                   moxon.lt8@gmail.com
                   </a>
                 </dd>
+                <dt className="flex-none">
+                  <span className="sr-only">individ. veiklos nr. 1359473</span>
+                </dt>
               </div>
             </dl>
           </div>
