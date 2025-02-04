@@ -22,6 +22,17 @@ export default async function ProductDetail({ params }: Props) {
     node as { id: string; altText: string, sourceUrl: string }
   )
 
+  const allImages = [
+    product.image
+      ? {
+        id: 'product-image', // Unique ID for the product image
+        altText: product.image.altText || 'Main product image', // Fallback for altText
+        sourceUrl: product.image.sourceUrl || '/placeholder.jpg', // Fallback for sourceUrl
+      }
+      : null,
+    ...(images || []),
+  ].filter((image): image is { id: string; altText: string; sourceUrl: string } => Boolean(image));
+
   // console.log(product.galleryImages?.edges)
 
   return (
@@ -45,22 +56,20 @@ export default async function ProductDetail({ params }: Props) {
 
         {/* Product Gallery */}
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-          {images && images.length > 0 ? (
+          {allImages && allImages.length > 0 ? (
             <TabGroup className="flex flex-col-reverse">
-              {/* TabPanels */}
-
               {/* TabList */}
               <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
                 <TabList className="grid grid-cols-4 gap-6">
-                  {images.map((image) => (
+                  {allImages.map((image) => (
                     <Tab
                       key={image.id}
                       className="group relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-indigo-500/50 focus:ring-offset-4"
                     >
                       <span className="absolute inset-0 overflow-hidden rounded-md">
                         <img
-                          alt={image.altText || "Gallery Image"} // Provide default alt text
-                          src={image.sourceUrl || "/placeholder.jpg"} // Fallback for missing image
+                          alt={image.altText || "Gallery Image"}
+                          src={image.sourceUrl || "/placeholder.jpg"}
                           className="size-full object-cover"
                         />
                       </span>
@@ -73,38 +82,39 @@ export default async function ProductDetail({ params }: Props) {
                 </TabList>
               </div>
 
+              {/* TabPanels */}
               <TabPanels>
-                {images.map((image) => (
+                {allImages.map((image) => (
                   <TabPanel key={image.id}>
                     <img
-                      alt={image.altText || "Gallery Image"}
-                      src={image.sourceUrl || "/placeholder.jpg"}
+                      alt={image.altText || "Gallery Image"} 
+                      src={image.sourceUrl || "/placeholder.jpg"} 
                       className="aspect-square w-full object-cover sm:rounded-lg"
                     />
                   </TabPanel>
                 ))}
               </TabPanels>
-
             </TabGroup>
           ) : (
-            // Fallback for when there are no images in the gallery
+
             <div className="overflow-hidden rounded-lg border border-gray-200">
               <img
-                alt={product.image?.altText || "Product image"} // Fallback alt text
-                src={product.image?.sourceUrl || "/placeholder.jpg"} // Fallback single product image
+                alt={product.image?.altText || "Product image"}
+                src={product.image?.sourceUrl || "/placeholder.jpg"}
                 className="h-full w-full object-cover object-center"
               />
             </div>
           )}
-
 
           {/* Product Info */}
           <div className="mt-10 lg:mt-0">
             <ProductInfo product={product} />
           </div>
         </div>
+
+
         <div className="mt-12">
-          <ReviewsComponent product={product} /> {/* Pass product.id as productId */}
+          <ReviewsComponent product={product} />
         </div>
 
 
