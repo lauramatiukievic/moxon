@@ -1,6 +1,12 @@
+'use client'
+import { submitContactForm } from '@/actions/contact'
 import { BuildingOffice2Icon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline'
+import { useActionState } from 'react'
 
 export default function Example() {
+  const [state, action, isPending] = useActionState(submitContactForm, { success: false, message: '' })
+
+
   return (
     <div className="relative isolate bg-white">
       <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
@@ -13,10 +19,12 @@ export default function Example() {
               Kilus klausimų, galite su mumis susisiekti. Taip pat kviečiame pamatyti mūsų socialinius tinklus.
             </p>
             <dl className="mt-10 space-y-4 text-base/7 text-gray-600">
-              <div className="flex gap-x-4">
-              <dt className="flex-none">
-                  <span className="sr-only">Arneta Vaitkevičiūtė</span>
+            <h2 className='font-semibold text-2xl text-gray-900'>Rekvizitai:</h2>
+            <dt className="flex-none">
+                  <span className="">Arneta Vaitkevičiūtė</span>
                 </dt>
+              <div className="flex gap-x-4">
+             
                 <dt className="flex-none">
                   <span className="sr-only">Telefonas</span>
                   <PhoneIcon aria-hidden="true" className="h-7 w-6 text-gray-400" />
@@ -37,14 +45,15 @@ export default function Example() {
                   moxon.lt8@gmail.com
                   </a>
                 </dd>
-                <dt className="flex-none">
-                  <span className="sr-only">individ. veiklos nr. 1359473</span>
-                </dt>
+
               </div>
+              <dt className="flex-none">
+                  <span className="">individ. veiklos nr. 1359473</span>
+                </dt>
             </dl>
           </div>
         </div>
-        <form action="#" method="POST" className="px-6 pb-24 pt-20 sm:pb-32 lg:px-8 lg:py-48">
+        <form action={action}  className="px-6 pb-24 pt-20 sm:pb-32 lg:px-8 lg:py-48">
           <div className="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <div>
@@ -53,8 +62,8 @@ export default function Example() {
                 </label>
                 <div className="mt-2.5">
                   <input
-                    id="first-name"
-                    name="first-name"
+                    id="name"
+                    name="name"
                     type="text"
                     autoComplete="given-name"
                     className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
@@ -90,13 +99,13 @@ export default function Example() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="phone-number" className="block text-sm/6 font-semibold text-gray-900">
+                <label htmlFor="phone" className="block text-sm/6 font-semibold text-gray-900">
                   Telefono numeris
                 </label>
                 <div className="mt-2.5">
                   <input
-                    id="phone-number"
-                    name="phone-number"
+                    id="phone"
+                    name="phone"
                     type="tel"
                     autoComplete="tel"
                     className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
@@ -126,6 +135,11 @@ export default function Example() {
                 Siųsti žinutę
               </button>
             </div>
+                            {state?.message && (
+                    <div className={`alert ${state.success ? 'alert-success' : 'alert-danger'}`}>
+                        {state.message}
+                    </div>
+                )}
           </div>
         </form>
       </div>
