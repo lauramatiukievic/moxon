@@ -20,9 +20,6 @@ import Link from "next/link";
           <div className="sm:grid sm:grid-cols-2 xl:gap-8">
             <div className="space-y-8">
            <Logo/>
-              <p className="text-balance text-sm/6 text-gray-600">
-                Čia gali būti citata
-              </p>
             </div>
             <div className=" grid grid-cols-1 gap-8 xl:mt-0">
               <div className="mt-10 sm:mt-0 sm:grid sm:grid-cols-2 md:gap-8">
