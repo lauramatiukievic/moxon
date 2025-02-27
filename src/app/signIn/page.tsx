@@ -95,9 +95,9 @@ export default function LoginForm() {
             </form>
           ) : (
             <div>
-              <p>Welcome, {session?.user?.name}</p>
+              <p>Sveiki, {session?.user?.name}</p>
               <Link href="/" className="text-sm font-semibold text-purple-600 hover:text-purple-500">
-                Go to Products
+                Eikite į produktus
               </Link>
             </div>
           )}
