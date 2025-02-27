@@ -4,7 +4,14 @@ import { LoginMutation } from "./queries/order/LoginQuery";
 import { print } from "graphql";
 import { JWT } from "next-auth/jwt";
 
+function decodeToken(accessToken: string) {
+  return JSON.parse(
+      Buffer.from(accessToken.split('.')[1], 'base64').toString()
+  )
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
@@ -54,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             accessToken: loginData.authToken,
           }
 
-          // console.log('authorized, result: ', result)
+          console.log('authorized, result: ', result)
           // Return user and token
           return result;
         } catch (error) {
@@ -73,14 +80,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.email = user.email;
         token.accessToken = user.accessToken; // Save authToken as accessToken
       }
-      // console.log('jwt callback saving token: ', token)
+      console.log('jwt callback saving token: ', token)
       return token;
     },
     session({ session, token } : {session: Session, token: JWT}) {
-      // console.log('session callback, token:', token)
       if (token && token.accessToken) {
         session.accessToken = token.accessToken; 
+        const decoded = decodeToken(token.accessToken);
+        session.expires = new Date(decoded.exp * 1000).toISOString()
       }
+      console.log('saving session: ', session)
 // Add accessToken to session
       return session;
     },

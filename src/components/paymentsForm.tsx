@@ -11,25 +11,13 @@ import { useSession } from 'next-auth/react';
 import Select, { SingleValue } from 'react-select';
 import countries from 'world-countries';
 import i18nIsoCountries from 'i18n-iso-countries';
+import { redirectToPaysera } from '@/utils/checkout-utils';
 
-
-
-interface PaymentData {
-  projectid: string;
-  orderid: string;
-  accepturl: string;
-  cancelurl: string;
-  callbackurl: string;
-  version: string;
-  amount: number;
-  currency: string;
-}
 
 const deliveryMethods = [
   { id: 1, title: 'Paštomatu', turnaround: '2–5 darbo dienos', price: 3.99 },
   { id: 2, title: 'Į namus', turnaround: '2–5 darbo dienos', price: 4.50 },
 ];
-
 
 export default function PaymentForm() {
   const { data: session } = useSession()
@@ -40,10 +28,9 @@ export default function PaymentForm() {
 
   i18nIsoCountries.registerLocale(require('i18n-iso-countries/langs/lt.json'));
 
-  // Map countries to Lithuanian names
   const countryOptions = countries.map((country) => ({
-    value: country.cca2, // ISO 3166-1 alpha-2 code
-    label: i18nIsoCountries.getName(country.cca2, 'lt') || country.name.common, // Lithuanian name or fallback
+    value: country.cca2,
+    label: i18nIsoCountries.getName(country.cca2, 'lt') || country.name.common,
   }));
 
 
@@ -96,15 +83,15 @@ export default function PaymentForm() {
     setIsSubmitting(true);
 
     const lineItems = shoppingBag.map((item) => ({
-      productId: item.databaseId, // Decode base64 and extract the integer
+      productId: item.databaseId,
       quantity: item.quantity,
       variationId: item.variationId || null
     }));
 
     const orderData = {
-      paymentMethod: "cod",
-      paymentMethodTitle: "Cash on Delivery",
-      isPaid: true,
+      paymentMethod: "paysera",
+      paymentMethodTitle: "Paysera",
+      isPaid: false,
       billing: {
         firstName: billingDetails.firstName,
         lastName: billingDetails.lastName,
@@ -126,29 +113,30 @@ export default function PaymentForm() {
       lineItems,
     };
 
-
-    console.log("Order Data Sent to GraphQL:", orderData); // Log the order data before sending
-    console.log('Shopping Bag:', shoppingBag);
-
-    console.log(lineItems)
-
     try {
       const response = await fetchGraphQL(print(CREATE_ORDER_MUTATION), { input: orderData }, session);
-      console.log('GraphQL Response:', response);
-      alert('Order successfully created!');
+
       clearBag()
-      const projectPassword = "dd813fde7c3bf5f3b947d7d401d8fba4"; // Replace with actual project password
       const paymentData = {
-        projectid: "248064", // Replace with actual project ID
-        orderid: "unique_order_id_" + Date.now(), // Unique order ID
-        accepturl: "https://bc9e-84-15-188-109.ngrok-free.app",
-        cancelurl: "https://bc9e-84-15-188-109.ngrok-free.app",
-        callbackurl: "https://bc9e-84-15-188-109.ngrok-free.app/api/paysera-callback",
-        version: "1.6",
-        amount: 1000, // Amount in cents (e.g., 1000 = 10.00 EUR)
+        projectid: process.env.NEXT_PUBLIC_PAYSERA_PROJECT_ID!,
+        orderid: response.createOrder.order.id,
+        accepturl: `${process.env.NEXT_PUBLIC_BASE_URL}/order/success`,
+        cancelurl: `${process.env.NEXT_PUBLIC_BASE_URL}/order/failed`,
+        callbackurl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/paysera-callback`,
+        test: "1",
+        version: "1.8",
+        amount: (calculateTotalPrice() * 100).toFixed(2),
         currency: "EUR",
+        p_firstname: billingDetails.firstName,
+        p_lastname: billingDetails.lastName,
+        p_email: billingDetails.email,
+        p_phone: billingDetails.phone,
+        p_address: billingDetails.address1,
+        p_city: billingDetails.city,
+        p_zip: billingDetails.postcode,
+        p_country: billingDetails.country
       };
-      // redirectToPaysera(paymentData, projectPassword);
+      redirectToPaysera(paymentData);
     } catch (error) {
       console.error('GraphQL Error:', error);
       alert('Failed to create order. Please try again.');
@@ -156,8 +144,6 @@ export default function PaymentForm() {
       setIsSubmitting(false);
     }
   };
-
-
 
   return (
     <div className="bg-white">

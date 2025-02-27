@@ -44,3 +44,17 @@ export async function middleware(request: NextRequest) {
     });
   }
 }
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - API routes (`api`)
+     * - Static files (`_next/static`)
+     * - Image optimization files (`_next/image`)
+     * - Metadata files (`favicon.ico`, `sitemap.xml`, `robots.txt`)
+     * - Logout route
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|logout).*)',
+  ],
+}

@@ -1,7 +1,12 @@
 
 import PaymentForm from "@/components/paymentsForm";
+import { auth } from "@/auth"
+import { redirect } from "next/navigation";
 
-export default function PaymentPage() {
+export default async function PaymentPage() {
+  const session = await auth()
+  if (!session) redirect('/signIn')
+
 
   return (
     <div className="bg-white">

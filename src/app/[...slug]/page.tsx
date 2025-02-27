@@ -14,17 +14,18 @@ import { SeoQuery } from "@/queries/general/SeoQuery";
 import HomePage from "@/components/Templates/Home/home";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = nextSlugToWpSlug(params.slug);
-  const isPreview = slug.includes("preview");
+  const { slug } = await params
+  const wpSlug = nextSlugToWpSlug(slug);
+  const isPreview = wpSlug.includes("preview");
 
   const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
     print(SeoQuery),
     {
-      slug: isPreview ? slug.split("preview/")[1] : slug,
+      slug: isPreview ? wpSlug.split("preview/")[1] : wpSlug,
       idType: isPreview ? "DATABASE_ID" : "URI",
     },
   );
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     ...metadata,
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}${slug}`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}${wpSlug}`,
     },
   } as Metadata;
 }
@@ -48,16 +49,17 @@ export function generateStaticParams() {
 }
 
 export default async function Page({ params }: Props) {
-  const slug = nextSlugToWpSlug(params.slug);
-  if (slug === "/") {
+  const { slug } = await params
+  const wpSlug = nextSlugToWpSlug(slug);
+  if (wpSlug === "/") {
     return (<HomePage />)
   }
 
-  const isPreview = slug.includes("preview");
+  const isPreview = wpSlug.includes("preview");
   const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
     print(ContentInfoQuery),
     {
-      slug: isPreview ? slug.split("preview/")[1] : slug,
+      slug: isPreview ? wpSlug.split("preview/")[1] : wpSlug,
       idType: isPreview ? "DATABASE_ID" : "URI",
     },
   );

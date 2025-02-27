@@ -11,19 +11,36 @@ import Header from "@/components/header";
 import { MobileProvider } from "@/components/mobileContext";
 import { SessionProvider } from "next-auth/react";
 import Footer from "@/components/footer";
-import Products from "@/components/products";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const inter = Montserrat({ subsets: ["latin"] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isEnabled } = draftMode();
+
+  
+  const session = await auth();
+
+  if (session?.expires) {
+    const expirationDate = new Date(session.expires)
+    const currentDate = new Date()
+    console.log('expirationDate:', expirationDate, 'currentDate', currentDate)
+    if (expirationDate <= new Date()) {
+      console.log('session expired, logging out')
+      redirect('/api/signout'); // This will trigger the route handler above
+    }
+  }
+  // const { isEnabled } = await draftMode();
 
   return (
     <html lang="en">
+      <head>
+        <meta name="verify-paysera" content="d43a93846336b608cd83c6c3fc23cdcb" />
+      </head>
       <body className={`${inter.className} relative bg-white overflow-hidden`}>
         {/* Background Purple Blurs */}
         {/* <div className="absolute middle-[-150px] left-[-200px] w-[500px] h-[500px] bg-purple-500 blur-[200px] opacity-60 rounded-full"></div>

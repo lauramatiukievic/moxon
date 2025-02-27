@@ -7,11 +7,11 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import ReviewsComponent from '@/components/reviews';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function ProductDetail({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const { product } = await fetchGraphQL<{ product: VariableProduct }>(print(ProductQuery), { id: slug });
 
   const categories = product.productCategories?.edges.map(({ node }) =>
