@@ -42,11 +42,9 @@ export default function PaymentForm() {
   };
 
 
-
   const [billingDetails, setBillingDetails] = useState({
     firstName: '',
     lastName: '',
-    email: '',
     address1: '',
     city: '',
     postcode: '',
@@ -95,7 +93,7 @@ export default function PaymentForm() {
       billing: {
         firstName: billingDetails.firstName,
         lastName: billingDetails.lastName,
-        email: billingDetails.email,
+        email: session?.user?.email,
         address1: billingDetails.address1,
         city: billingDetails.city,
         postcode: billingDetails.postcode,
@@ -129,7 +127,6 @@ export default function PaymentForm() {
         currency: "EUR",
         p_firstname: billingDetails.firstName,
         p_lastname: billingDetails.lastName,
-        p_email: billingDetails.email,
         p_phone: billingDetails.phone,
         p_address: billingDetails.address1,
         p_city: billingDetails.city,
@@ -153,30 +150,9 @@ export default function PaymentForm() {
 
           <form onSubmit={handleSubmit} className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
             <div>
-              <div>
+              {/* <div>
                 <h2 className="text-lg font-medium text-gray-900">Pirkėjo informacija</h2>
-
-                <div className="mt-4">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Elektroninis paštas
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      required
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      value={billingDetails.email}
-                      onChange={handleBillingChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                    />
-                    {!billingDetails.email && (
-                      <p className="mt-2 text-sm text-red-600">Reikia užpildyti</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+              </div> */}
 
               <div className="mt-10 border-t border-gray-200 pt-10">
                 <h2 className="text-lg font-medium text-gray-900">Pristatymo informacija</h2>
