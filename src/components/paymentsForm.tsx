@@ -150,11 +150,8 @@ export default function PaymentForm() {
 
           <form onSubmit={handleSubmit} className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
             <div>
-              {/* <div>
-                <h2 className="text-lg font-medium text-gray-900">Pirkėjo informacija</h2>
-              </div> */}
-
-              <div className="mt-10 border-t border-gray-200 pt-10">
+   
+              <div className="">
                 <h2 className="text-lg font-medium text-gray-900">Pristatymo informacija</h2>
                 <span>(Pristatysime į artimiausia paštomatą nurodytu adresu)</span>
 
