@@ -71,7 +71,7 @@ export default function ProductList({ products }: Props) {
                         />
                       ))}
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">{product.reviewCount} reviews</p>
+                    <p className="mt-1 text-sm text-gray-500">{product.reviewCount} atsiliepimai</p>
                   </div>
 <p className="mt-4 text-base font-medium text-gray-900">
   {extractLowestPrice(product.price) === Infinity ? 'N/A' : `${extractLowestPrice(product.price)} €`}

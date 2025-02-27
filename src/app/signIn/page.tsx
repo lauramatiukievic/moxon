@@ -6,40 +6,40 @@ import { AuthError } from "next-auth";
 import { useEffect, useState } from "react";
 
 export default function LoginForm() {
-  const { data: session, status } = useSession(); // Track session state
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Local state to track login status
+  const { data: session, status } = useSession(); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [error, setError] = useState(""); // Klaidos būsena
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Išvalyti seną klaidą
+  
     const formData = new FormData(e.target as HTMLFormElement);
-
-    try {
-      await signIn("credentials", {
-        redirectTo: '/',
-        username: formData.get('username'),
-        password: formData.get('password')
-      });
-    } catch (error) {
-      if (error instanceof AuthError) {
-        throw new Error("Invalid email or password", error);
-      }
-      throw error;
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+  
+    const result = await signIn("credentials", {
+      redirect: false, // NEPERSIUNTINĖTI, O GAUTI ATSAKYMĄ
+      username,
+      password,
+    });
+  
+    if (result?.error) {
+      setError("Neteisingas el. paštas arba slaptažodis");
     }
   };
+  
 
-  // Watch session state and update the login status
   useEffect(() => {
     if (status === "authenticated") {
-      setIsLoggedIn(true); // Set local state when authenticated
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false); // Reset when not authenticated
+      setIsLoggedIn(false);
     }
   }, [status]);
 
-  // Handle loading state
   if (status === "loading") {
-    return <div>Loading...</div>; // Optionally, show a loading spinner
+    return <div>Loading...</div>;
   }
 
   return (
@@ -55,12 +55,12 @@ export default function LoginForm() {
           {!isLoggedIn ? (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-900">
                   Paštas
                 </label>
                 <div className="mt-2">
                   <input
-                    id="email"
+                    id="username"
                     name="username"
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm"
                   />
@@ -90,14 +90,14 @@ export default function LoginForm() {
                 >
                   Prisijungti
                 </button>
+                {error && <span className="block mt-2 text-sm text-red-500">{error}</span>}
               </div>
             </form>
           ) : (
             <div>
               <p>Welcome, {session?.user?.name}</p>
               <Link href="/" className="text-sm font-semibold text-purple-600 hover:text-purple-500">
-
-                  Go to Products
+                Go to Products
               </Link>
             </div>
           )}
@@ -115,3 +115,4 @@ export default function LoginForm() {
     </div>
   );
 }
+

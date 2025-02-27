@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import transporter from '@/utils/mailersend'
+import transporter from '@/utils/nodemailer'
 
 const contactSchema = z.object({
     name: z.string().min(1, 'Vardas yra privalomas'),
